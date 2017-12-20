@@ -1,0 +1,18 @@
+Package: symconivol
+Type: Package
+Title: Curvature measures of symmetric cones
+Version: 0.0.0.900
+Authors@R: as.person(
+        "Dennis Amelunxen <damelunx@gmail.com> [aut, cre]"
+    )
+Description: --TBD--
+License: GPL-3
+Encoding: UTF-8
+LazyData: true
+Suggests: knitr,
+    rmarkdown,
+    testthat
+VignetteBuilder: knitr
+RoxygenNote: 6.0.1
+Imports: Rmosek,
+    Matrix
