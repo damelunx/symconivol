@@ -1,4 +1,25 @@
-
+#' Stan model creation for sampling index constrained eigenvalues from the Gaussian orthogonal/unitary/symplectic ensembles
+#' 
+#' \code{constr_eigval}
+#' 
+#' @param pos parameter description
+#' @param free parameter description
+#' @param neg parameter description
+#' @param filename parameter description
+#' @param overwrite parameter description
+#' 
+#' @return returns what
+#' 
+#' @section See also:
+#' \code{\link[symconivol]{constr_eigval_to_bcbsq}}, 
+#' \code{\link[symconivol]{prepare_em_cm}}, 
+#' \code{\link[symconivol]{estim_em_cm}}
+#' 
+#' Package: \code{\link[symconivol]{symconivol}}
+#' 
+#' @examples
+#' # some example code
+#' 
 #' @export
 #'
 constr_eigval <- function(pos, free, neg, filename=NA, overwrite=FALSE) {
