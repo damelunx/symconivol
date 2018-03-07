@@ -1,0 +1,25 @@
+Algebraic degrees of SDP. Format: r goes from 1 to n-1 (outer iteration), inner iteration is for m (within Pataki bounds)
+16
+40
+40
+20
+5
+35
+140
+260
+290
+207
+90
+20
+20
+90
+207
+290
+260
+140
+35
+5
+20
+40
+40
+16
