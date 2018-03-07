@@ -281,10 +281,12 @@ leigh <- function(N=1e3) {
 #' 
 #' @examples
 #' AD_str <- alg_deg(6)
+#' 
 #' # convert to integer matrix
 #' AD <- matrix( as.numeric(AD_str), dim(AD_str) )
 #' colnames(AD) <- colnames(AD_str)
 #' rownames(AD) <- rownames(AD_str)
+#' 
 #' # compare both matrices
 #' print(AD_str)
 #' print(AD)
@@ -292,6 +294,7 @@ leigh <- function(N=1e3) {
 #' # doing the same for larger n
 #' AD_str <- alg_deg(14)
 #' AD <- matrix( as.numeric(AD_str), dim(AD_str) )
+#' 
 #' # the conversion introduces rounding errors
 #' i <- which.max(AD_str)
 #' print(AD_str[i])

@@ -57,13 +57,13 @@
 #' \describe{
 #'   \item{manual}{\href{https://damelunx.github.io/symconivol/}{damelunx.github.io/symconivol}}
 #'   \item{sources}{\href{https://github.com/damelunx/symconivol}{github.com/damelunx/symconivol}}
-#'   \item{vignette}{\href{../doc/curv_meas.html}{}:
+#'   \item{vignette}{\href{../doc/curv_meas.html}{Studying curvature measures of symmetric cones}:
 #'         introduces curvature measures of symmetric cones, their relation to
 #'         the Gaussian orthogonal/unitary/symplectic ensemble conditioned on
 #'         the index function, explains the algorithms involved for estimating
 #'         the curvature measures, gives some background and estimates involving
 #'         limiting distributions and the algebraic degree of semidefinite programming}
-#'   \item{vignette}{\href{../doc/curv_meas_tech.html}{}:
+#'   \item{vignette}{\href{../doc/curv_meas_tech.html}{Studying curvature measures of symmetric cones - Technical details}:
 #'         a technical note to accompany the other vignette to give the commands
 #'         for producing some figures in the main vignette, which are
 #'          not computed on the fly}
