@@ -1,0 +1,1332 @@
+---
+title: "Studying curvature measures of symmetric cones"
+author: "Dennis Amelunxen"
+date: "22 February, 2018"
+output: rmarkdown::html_vignette
+bibliography: references.bib
+link-citations: true
+---
+
+```{r, echo = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  fig.path = "curv-meas_figures/"
+)
+```
+
+```{r load-pkgs, include=FALSE}
+library(symconivol)
+library(conivol)
+library(tidyverse)
+library(knitr)
+library(png)
+library(Rmisc)
+library(rstan)
+library(latex2exp)
+```
+
+In this note we study the curvature measures of symmetric cones
+through the distribution of the Gaussian orthogonal/unitary/symplectic ensemble
+conditioned on the index function, that is, on the number of positive eigenvalues.  
+
+Our approach follows closely the approach of reconstructing the conic intrinsic
+volumes from the corresponding bivariate chi-bar-squared distribution.
+We will assume familiarity with this approach, which is explained in the 
+vignette [Estimating conic intrinsic volumes from bivariate chi-bar-squared data](../../conivol/vignettes/estim-conic-intrinsic-volumes-with-EM.html)
+from the `conivol` package.  
+
+We present the connection between the curvature measures and the index constrained
+Gaussian orthogonal/unitary/symplectic ensemble without proof; for more information
+and references, see [@AB15s]. One motivation for this study is its connection with
+the problem of predicting the rank of the solution of a random semidefinite program.
+This connection is explained in the [final section](#appl_SDP) of this note.  
+
+In an [appendix]({#alg_deg}) we present an observation about a possible connection
+between the curvature measures of semidefinite cones and the algebraic degree
+of semidefinite programming.  
+
+Some plots in this study require longer computations and are included as image
+files; the code for getting the data and for constructing these images is
+provided in [this technical note](curv_meas_tech.html).
+
+
+**Vignettes from the `conivol` package:**
+
+* [Conic intrinsic volumes and (bivariate) chi-bar-squared distribution](../../conivol/vignettes/conic-intrinsic-volumes.html):
+    introduces conic intrinsic volumes and (bivariate) chi-bar-squared distributions,
+    as well as the computations involving polyhedral cones,
+* [Estimating conic intrinsic volumes from bivariate chi-bar-squared data](../../conivol/vignettes/estim-conic-intrinsic-volumes-with-EM.html):
+    describes the details of the algorithm for finding the intrinsic volumes of closed
+    convex cones from samples of the associated bivariate chi-bar-squared distribution,
+* [Bayesian estimates for conic intrinsic volumes](../../conivol/vignettes/bayesian.html):
+    describes the Bayesian approach for reconstructing intrinsic volumes
+    from sampling data, which can either be samples from the intrinsic
+    volumes distribution (in the case of polyhedral cones), or from the
+    bivariate chi-bar-squared distribution, and which can be with or without
+    enforcing log-concavity of the intrinsic volumes.
+
+
+## Symmetric cones
+
+[Symmetric cones](https://en.wikipedia.org/wiki/Symmetric_cone) are self-dual convex cones
+with a transitive group of symmetries. Every symmetric cone decomposes into an
+orthogonal sum of a finite number of simple symmetric cones, which consist of
+
+* the Lorentz cones (circular cones of radius $\pi/4$),
+* positive semdefinite real symmetric matrices,
+* positive semdefinite complex unitary matrices,
+* positive semdefinite quaternion unitary matrices,
+* positive semidefinite octonion unitary $3\times 3$-matrices.
+
+The first four points each describe families of cones, while the last one is just
+a single exceptional cone. The Lorentz cones have a very simple structure
+(arguably the simplest kind of convex cones, which are not linear subspaces)
+and do not
+have the kind of structure that we focus on in this note. We also do not discuss the
+exceptional symmetric cone. So "symmetric cone" in this note is synonymous to a cone
+of positive semidefinite real symmetric/complex unitary/quaternion unitary matrices
+of a certain format.
+
+We use the Dyson index $\beta\in\{1,2,4\}$ to indicate whether the ground field is
+real ($\beta=1$), complex ($\beta=2$), or quaternion ($\beta=4$); we denote
+the size of the matrices by $n$. The set of real symmetric/complex unitary/quaternion
+unitary matrices form a Euclidean space $\mathcal{E}$ of dimension
+    \[ d = n + \beta\binom{n}{2}
+        = \frac{\beta}{2} n^2 \cdot \begin{cases} (1+\frac{1}{n}) & \text{if } \beta=1
+            \\ 1 & \text{if } \beta=2
+            \\ (1-\frac{1}{2n}) & \text{if } \beta=4 .
+            \end{cases} \]
+The Gaussian orthogonal/symmetric/unitary ensemble, which we denote by
+$\text{G}\beta\text{E}$, is the standard normal distribution on $\mathcal{E}$
+(after choosing some orthonormal basis in $\mathcal{E}$, the distribution can be found
+by taking iid standard normal random variables for the resulting coordinates).
+This distribution on $\mathcal{E}$ induces a distribution on the Weyl chamber
+    \[ \{x\in\text{R}^n\mid x_1\leq x_2\leq\dots\leq x_n \} , \]
+through the function that maps a matrix $A\in\mathcal{E}$ to its vector of 
+ordered eigenvalues $\text{eig}(A)$.
+We slightly abuse notation and also denote this induced
+distribution on the Weyl chamber by $\text{G}\beta\text{E}$
+(from the context it is clear
+whether we are talking about matrices or eigenvalues; we will mostly be talking
+about the eigenvalues).
+The Euclidean norm on $\mathcal{E}$ can be expressed through the eigenvalues;
+in fact, it is given by the Euclidean norm of the eigenvalues,
+$\|A\|_F=\|\text{eig}(A)\|=\|\text{eig}(A)\|_2$.
+(We use the notation $\|A\|_F$ to emphasize that we are not taking the usual operator
+norm but the Frobenius norm, which is the Euclidean norm in matrix space.)
+
+We denote the cone of positive semidefinite matrices by $C\subset\mathcal{E}$.
+The rank decomposition of $\mathcal{E}$ induces a rank decomposition of $C$,
+which we denote by
+    \[ C = \bigcup_{r=0}^n M_r . \]
+While the rank function is important, we will focus in this note on the index
+function that counts the number of positive entries in a vector,
+    \[ \text{ind}(x)=(\text{number of positive entries in }x) . \]
+Instead of the rank we can also use the index function to describe the
+strata of $C$,
+    \[ M_r = \{A\in C\mid \text{ind}(\text{eig}(A))=r \} . \]
+
+## Curvature measures of symmetric cones {#curv_meas}
+
+The intrinsic volumes of a convex cone, and also the curvature measures that
+we will analyze here, can be described through corresponding
+(bivariate) chi-bar-squared distributions. For this we denote the orthogonal
+projection on the cone $C$ by $\Pi_C\colon\mathcal{E}\to C$,
+    \[ \Pi_C(A) = \text{argmin}\{ \|A-B\|_F \mid B\in C \} . \]
+It is easily verified that the eigenvalues of the projection on the positive 
+semidefinite cone $C$ and on its polar cone $C^\circ=-C$
+are given by
+    \[ \text{eig}\big(\Pi_C(A)\big) = \big(\text{eig}(A)\big)_+ ,\quad 
+        \text{eig}\big(\Pi_{C^\circ}(A)\big) = \big(\text{eig}(A)\big)_- , \]
+where in $(x)_+=:x_+$ all negative entries of $x$ are replaced by zero, and similarly
+in $(x)_-=:x_-$ all positive entries of $x$ are replaced by zero. To simplify the 
+notation we will now focus on the eigenvalues of the matrices.
+
+The bivariate chi-bar-squared distribution of $C$ is the distribution of the pair
+    \[ \big(\|x_+\|^2,\|x_-\|^2\big) ,\quad x\sim \text{G}\beta\text{E} . \]
+The connection to the intrinsic volumes $v_k:=v_k(C)$, $0\leq k\leq d$, is given by an
+alternative way to describe this distribution: Let the discrete random variable
+$Z\in\{0,\ldots,d\}$ be described by the probabilities
+    \[ \text{Prob}(Z=k) = v_k , \]
+then $(X_+,X_-)$ defined by the conditional distributions
+    \[ X_+\mid Z\sim \chi_Z^2,\quad X_-\mid Z\sim \chi_{d-Z}^2 ,\quad
+        X_+\mid Z,\; X_-\mid Z \text{ independent} , \]
+has the same distribution as $\big(\|x_+\|^2,\|x_-\|^2\big)$.
+This property, known as the generalized Steiner formula, provides a characterization
+of the intrinsic volumes.
+
+The curvature measures $\Phi_{kr} := \Phi_k(C,M_r)$ allow for a similar characterization
+if the $\text{G}\beta\text{E}$ is conditioned on the index. More precisely,
+if $\emptyset\neq R\subseteq\{0,\ldots,n\}$, then the pair
+    \[ \big(\|x_+\|^2,\|x_-\|^2\big) ,\quad
+        x\sim \big( \text{G}\beta\text{E}\mid\text{ind}(x)\in R \big) \]
+has the same distribution as $(X_+,X_-)$, hierarchically defined via
+    \[ X_+\mid Z\sim \chi_Z^2,\quad X_-\mid Z\sim \chi_{d-Z}^2 ,\quad
+        X_+\mid Z,\; X_-\mid Z \text{ independent} , \]
+where the latent variable $Z$ has the probabilities
+    \[ \text{Prob}(Z=k) =
+    \frac{\sum_{r\in R} \Phi_{kr}}{\sum_{\ell=0}^d \sum_{r\in R} \Phi_{\ell r}} . \]
+Again, this property, a consequence of a localized form of the generalized Steiner formula,
+characterizes the curvature measures $\Phi_{kr}$.
+
+Note that for $R=\{0,\ldots,n\}$ we obtain the intrinsic volumes,
+    \[ \sum_{r=0}^n \Phi_{kr}=v_k . \]
+On the other hand, summing over the "dimension"
+parameter $k$ yields the distribution of the index function,
+    \[ \sum_{k=0}^d \Phi_{kr} = \text{Prob}\{\text{ind}(x)=r\} ,\quad
+    x\sim \text{G}\beta\text{E} . \]
+Yet another characterization of the curvature measures is obtained through
+the rank distribution of the solution of a (Gaussian) random semidefinite program;
+see the [final section](#appl_SDP) of this note for more details.
+
+### Pataki bounds
+
+Not all curvature measures $\Phi_{kr}$, $0\leq k\leq d$, $0\leq r\leq n$, are
+nonzero. In fact, the support of $\Phi_{kr}$ is accurately described by two
+inequalities known as Pataki's Inequalities:  
+The curvature measure $\Phi_{kr}$ is nonzero iff the indices $k,r$ satisfy the inequalities
+    \[ r + \beta \binom{r}{2} \leq k
+    \quad \text{and}\quad k \leq r + \beta \binom{r}{2} + \beta r (n-r)
+    = d - \Big( n-r + \beta \binom{n-r}{2} \Big) . \]
+Concretely, we obtain in the three cases $\beta=1,2,4$,
+\begin{align*}
+    \beta=1: & & \tfrac{r^2}{2}(1+\tfrac{1}{r}) & \leq k \leq d
+        - \tfrac{(n-r)^2}{2} (1+\tfrac{1}{n-r}) ,
+    \\ \beta=2: & & r^2 & \leq k \leq d-(n-r)^2 ,
+    \\ \beta=4: & & 2r^2 (1-\tfrac{1}{2r}) & \leq k \leq d
+        - 2(n-r)^2 (1-\tfrac{1}{2(n-r)}) ,
+\end{align*}
+Rewriting these inequalities in terms of $\frac{k}{d}$ yields
+\begin{align*}
+    & \frac{r + \beta \binom{r}{2}}{d} \leq \frac{k}{d} \leq 
+        1 - \frac{n-r + \beta \binom{n-r}{2}}{d}
+\\ \iff & \left\{
+    \begin{array}{r@{\!}c@{\!}ll}
+        \frac{1+\frac{1}{r}}{1+\frac{1}{n}}\cdot\big(\frac{r}{n}\big)^2
+        & \leq \frac{k}{d} \leq &
+        1 - \big(1-\frac{r}{n}\big)^2\cdot \frac{1+\frac{1}{n-r}}{1+\frac{1}{n}} & \text{if } \beta=1
+    \\ \big(\frac{r}{n}\big)^2
+        & \leq \frac{k}{d} \leq &
+        1-\big(1-\frac{r}{n}\big)^2
+        & \text{if } \beta=2
+    \\ \frac{1-\frac{1}{2r}}{1-\frac{1}{2n}}\cdot\big(\frac{r}{n}\big)^2 
+        & \leq \frac{k}{d} \leq &
+        1 - \big(1-\frac{r}{n}\big)^2\cdot\frac{1-\frac{1}{2(n-r)}}{1-\frac{1}{2n}} & \text{if } \beta=4
+    \end{array}\right.
+\end{align*}
+Asymptotically, we obtain for $n\to\infty$ and $r_n,k_n$ such that
+$\frac{r_n}{n}\to\rho\in[0,1]$ and $\frac{k_n}{d}\to\kappa\in[0,1]$,
+the inequalities
+    \[ \rho^2 \leq \kappa\leq 1-(1-\rho)^2 ,\quad \text{for } \beta=1,2,4 . \]
+We illustrate these inequalities for $n=3,6,10$, $\beta=1,2,4$:
+(the asymptotic bounds
+$(\frac{r}{n})^2 \leq \frac{k}{d} \leq 1-(1-\frac{r}{n})^2$
+are indicated by the dashed curves)
+
+```{r illustr-pat-bds, fig.width = 7, fig.height=12, echo=FALSE}
+plotsPB <- list()
+i <- 0
+for (beta in c(1,2,4)) {
+    for (n in c(3,6,10)) {
+        i <- i+1
+        pat <- pat_bnd(beta,n)
+        d <- pat$d
+        n_grid <- 0:n
+        d_grid <- 0:d
+        pts <- expand.grid(d_grid,n_grid)
+        colnames(pts) <- c("k","r")
+        pts$in_supp <- pts$k>=pat$k_low(pts$r) & pts$k<=pat$k_upp(pts$r)
+        y_pat <- seq(0,1,length.out=1e2)
+        pat_bd_low <- tibble(patX=d*y_pat^2, patY=n*y_pat)
+        pat_bd_upp <- tibble(patX=d*(1-y_pat^2), patY=n*(1-y_pat))
+        plotsPB[[i]] <- ggplot() + 
+            geom_point(data=pts, aes(x=r, y=k, color=in_supp), alpha=0.7) +
+            theme_bw() +
+            xlab(TeX(sprintf("$n=%d,\\; \\beta = %d\\; (d=%d)$", n, beta, n+beta*choose(n,2)))) +
+            theme(legend.position="none", 
+                  axis.title.y=element_blank(),
+                  axis.text.x=element_blank(), axis.text.y=element_blank(),
+                  axis.ticks.x=element_blank(), axis.ticks.y=element_blank(),
+                  panel.border = element_blank(), panel.grid.major = element_blank(),
+                  panel.grid.minor = element_blank(),
+                  axis.line = element_line(colour = "black")
+            ) +
+            scale_color_manual(values=c("gray60", "black")) +
+            geom_line(data=pat_bd_low, aes(patY, patX), linetype=2, alpha=0.5) +
+            geom_line(data=pat_bd_upp, aes(patY, patX), linetype=2, alpha=0.5)
+    }
+}
+multiplot(plotlist = plotsPB, cols = 3)
+```
+
+The goal of this study is to analyze the distribution of the curvature measures within this
+Pataki range.
+
+It is known that the index concentrates sharply
+around $n/2$, and it is also known that the intrinsic volumes concentrate sharply
+around $d/2$. So the unnormalized curvature measures concentrate in both parameters,
+$r$ and $k$, around $n/2$ and $d/2$, respectively. We will thus focus on the
+**conditional distributions**
+\begin{align*}
+     \Phi^{\text{ind}}_r & := \frac{(\Phi_{0r},\ldots,\Phi_{dr})}{\sum_{\ell=0}^d \Phi_{\ell r}} ,
+   & \Phi^{\text{dim}}_k & := \frac{(\Phi_{k0},\ldots,\Phi_{kn})}{\sum_{s=0}^n \Phi_{ks}} ,
+\end{align*}
+which we call the "index normalized" and the "dimension normalized" distributions.
+The dimension normalized distributions are particularly important for the application
+in semidefinite programming, as explained in the [final section](#appl_SDP) of this note.
+
+### Curvature measures normalized through index constraints {#ind_constr_cm}
+
+As explained [above](#curv_meas), by restricting the index to be equal to $r$, that is,
+$R=\{r\}$, we obtain the connection between the conditioned eigenvalue
+distribution $\text{G}\beta\text{E}\mid \text{ind}=r$ and the index normalized
+curvature measures $\Phi^{\text{ind}}_{kr}$ via
+    \[ \big(\|x_+\|^2,\|x_-\|^2\big)
+    \stackrel{\text{dist}}{=} \sum_{k=0}^d 1_{Z=k}\big(X_k,Y_{d-k}\big) , \]
+where $x\sim \text{G}\beta\text{E}\mid \text{ind}=r$,
+$\text{Prob}(Z=k)=\Phi^{\text{ind}}_{kr}$,
+and $X_k,Y_k\sim\chi_k^2$, where $Z,X_k,Y_k$ independent. 
+
+We can reconstruct these numbers as weights from a bivariate chi-bar-squared distribution,
+as described in the vignette
+[Estimating conic intrinsic volumes from bivariate chi-bar-squared data](../../conivol/vignettes/estim-conic-intrinsic-volumes-with-EM.html)
+from the `conivol` package, assuming that we have samples from the
+conditioned eigenvalue distribution $\text{G}\beta\text{E}\mid \text{ind}=r$.  
+Below we will discuss the details for these [sampling](#sampl_constr_eigval) and
+[reconstruction](#reconstr_ind) procedures.
+
+What remains to be addressed is the question how to obtain the other normalization,
+the dimension normalized curvature measures.
+This can be done in various ways, as we explain next.
+
+**Reconstruction 1: Via intrinsic volumes and Moore-Penrose inversion**
+
+From the unconstrained sampling of the eigenvalue distribution we can reconstruct
+the intrinsic volumes $v_k$. These can be used to find the denominators of the
+index normalized curvature measures, and thus to reconstruct the unnormalized
+curvature measures: summing the curvature measures over $r$ yields the intrinsic volumes,
+    \[ v_k = \sum_{r=0}^n \Phi_{kr} = \sum_{r=0}^n\Phi^{\text{ind}}_{kr} \sum_{\ell=0}^d \Phi_{\ell r} ; \]
+solving this overdetermined linear system of equations gives
+    \[ \bigg(\sum_{\ell=0}^d \Phi_{\ell r}\bigg) = 
+            \big(\Phi^{\text{ind}}_{kr}\big)^\dagger\cdot\big(v_k\big) , \]
+where $.^\dagger$ denotes Moore-Penrose inversion, and thus
+    \[ \big(\Phi_{kr}\big) = \big(\Phi^{\text{ind}}_{kr}\big)\cdot
+            \text{diag}\Big(\big(\Phi^{\text{ind}}_{kr}\big)^\dagger\cdot\big(v_k\big)\Big) . \]
+From the unnormalized curvature measures it is of course straightforward to
+reconstruct the dimension normalized curvature measures,
+  \[ \Phi^{\text{dim}}_{kr} = \frac{\Phi_{kr}}{\sum_{s=0}^n \Phi_{ks}} ,\quad
+  r=0,\ldots,n,\quad k=0,\ldots,d . \]
+
+This procedure works in theory, but it depends heavily on the accuracy of the reconstruction
+of the intrinsic volumes, and it does not enforce the Pataki inequalities.
+For this reason, we will consider further renormalization
+methods that depend less on specific reconstructions.
+
+**Reconstruction 2: Consecutive ranks**
+
+In addition to reconstructing the index normalized curvature
+measures, which [correspond to the choice](#curv_meas) $|R|=1$,
+we may reconstruct the weights corresponding to the choice $|R|=2$ and to consecutive
+ranks, that is, $R=\{r,r+1\}$.
+For notational convenience, fix $k\in\{0,\ldots,d\}$ and let us denote
+\begin{align*}
+    a_r & := \Phi^{\text{ind}}_{kr} = \frac{\Phi_{kr}}{\sum_{j=0}^d \Phi_{jr}} ,
+    & r & =0,\ldots,n
+\\ b_r & := \frac{\Phi_{kr}+\Phi_{k,r+1}}{\sum_{j=0}^d \big(\Phi_{jr}
+    +\Phi_{j,r+1}\big)} , & r & =0,\ldots,n-1
+\\ c_r & := \frac{\Phi_{k,r+1}}{\Phi_{kr}} , & r & =0,\ldots,n-1 .
+\end{align*}
+Note that in order to reconstruct the dimension normalized curvature measure
+$\Phi^{\text{dim}}_{kr}$ it suffices to reconstruct the constants $c_r$.
+We can reconstruct these by observing that
+\begin{align*}
+    \frac{1}{b_r} & = 
+    \frac{\sum_{j=0}^d \Phi_{jr}}{\Phi_{kr}}\frac{\Phi_{kr}}{\Phi_{kr}+\Phi_{k,r+1}}
+    + \frac{\sum_{j=0}^d \Phi_{j,r+1}}{\Phi_{k,r+1}} \frac{\Phi_{k,r+1}}{\Phi_{kr}+\Phi_{k,r+1}}
+\\ & = \frac{1}{a_r}\frac{1}{1+c_r} + \frac{1}{a_{r+1}}\frac{1}{\frac{1}{c_r}+1} ,
+\end{align*}
+which can be solved for $c_r$:
+  \[ c_r = -\frac{\frac{1}{b_r}-\frac{1}{a_r}}{\frac{1}{b_r}-\frac{1}{a_{r+1}}}
+  = -\frac{a_{r+1}\big(a_r-b_r\big)}{a_r\big(a_{r+1}-b_r\big)} .
+  \]
+So we obtain the following procedure to reconstruct
+the dimension normalized curvature measures $\Phi^{\text{dim}}_{kr}$:
+
+1. find $r_0=\text{argmax}\{ \Phi^{\text{ind}}_{kr}\mid 0\leq r \leq n \}$  
+    (this step is to minimize numerical issues; in theory any index within
+    the Pataki bounds works)
+2. set $\phi_{r_0}=1$ and define
+\begin{align*}
+    \phi_{r_0+1} & := c_{r_0}, & \phi_{r_0+2} & := c_{r_0}c_{r_0+1},
+    & \phi_{r_0+3} & := c_{r_0}c_{r_0+1}c_{r_0+2}, & \dots
+\\  \phi_{r_0-1} & := \frac{1}{c_{r_0-1}},
+    & \phi_{r_0-2} & := \frac{1}{c_{r_0-1}c_{r_0-2}},
+    & \phi_{r_0-3} & := \frac{1}{c_{r_0-1}c_{r_0-2}c_{r_0-3}}, & \dots
+\end{align*}
+    (staying within the Pataki bounds, of course)
+3. normalize the parameters $\phi_r$,
+    \[ \Phi^{\text{dim}}_{kr} = \frac{\phi_r}{\sum_{s=0}^n \phi_s} ,\quad r=0,\ldots,n . \]
+
+This approach should be more stable than the first approach, as it does not rely
+on a single reconstruction for the renormalization step. But the iterative nature
+of the reconstruction method is not too stable, and we can base the renormalization
+on a still broader foundation as we present in the next method.
+
+**Reconstruction 3: Whole range of ranks**
+
+We assume to have reconstructed the weights corresponding to all choices for
+$R$ with consecutive ranks. For notational convenience, we denote
+\begin{align*}
+    a_{kr}^s & := \frac{\sum_{j=0}^s \Phi_{k,r+j}}{\sum_{i=0}^d \sum_{j=0}^s
+    \Phi_{i,r+j}} , & k & =0,\ldots,d, \quad r=0,\ldots,n, \quad s=0,\ldots,n-r ,
+\end{align*}
+which corresponds to the choice $R=\{r,r+1,\ldots,r+s\}$.
+We assume to have reconstructed these constants, and we now find the unconstrained
+curvature measures by minimizing the lack of fit. So, we find the values for
+    \[ \Phi_{kr} ,\qquad k=0,\ldots,d,\quad r=0,\ldots,n, \]
+such that they minimize the lack of fit,
+    \[ \sum_{k,r,s}\Big( a_{kr}^s \sum_{i=0}^d \sum_{j=0}^s
+    \Phi_{i,r+j} - \sum_{j=0}^s \Phi_{k,r+j} \Big)^2 , \]
+subject to the constraints
+\begin{align*}
+    \Phi_{kr} & = 0 ,\quad \text{if $(k,r)$ not in Pataki range} ,
+\\ \Phi_{kr} & \in [0,\tfrac{1}{2}] , \qquad \Phi_{kr} = \Phi_{d-k,n-r} ,
+\qquad \sum_{k \text{ even}} \sum_{r=0}^n \Phi_{kr} =
+    \sum_{k \text{ odd}} \sum_{r=0}^n \Phi_{kr} = \tfrac{1}{2} .
+\end{align*}
+This minimization problem can be phrased as a second order program in the following way:
+defining
+  \[ b_{kr}^s := a_{kr}^s \sum_{i=0}^d \sum_{j=0}^s
+    \Phi_{i,r+j} - \sum_{j=0}^s \Phi_{k,r+j} , \]
+we see that $b=(b_{kr}^s)$ is a linear image of $\Phi$, and we can set up the
+program
+\begin{align*}
+    \text{minimize} \quad & x
+\\  \text{subject to} \quad & \big[\text{constraints on $\Phi$ and definition of $b$}\big]
+\\ & x\geq 0,\quad y = 1, \quad \|b\|^2\leq 2xy .
+\end{align*}
+This second-order cone program can be solved with [MOSEK](https://www.mosek.com/)
+using the rotated quadratic cone constraint.  
+See [below](#reconstr_dim) for an exmple using the implementation of this approach
+in `symconivol`.
+
+**Reconstruction 4: Via intrinsic volumes and second-order program**
+
+The second-order program can of course also be used if less information is given.
+In fact, as in the first reconstruction method, it suffices to have the index
+normalized curvature measures along with the intrinsic volumes. The lack
+of fit is then given by
+    \[ \sum_k \Big( v_k - \sum_r \Phi_{k,r} \Big)^2 +
+    \sum_{k,r}\Big( \Phi^{\text{ind}}_{kr} \sum_{i=0}^d \Phi_{i,r} - \Phi_{k,r} \Big)^2 , \]
+which is to be minimized subject to the same constraints as above.
+
+## Implementations
+
+Having explained the general approach, it remains to implement the computations,
+which consist of three parts:
+
+1. sampling from the index constrained eigenvalue distribution,
+2. reconstructing the index normalized curvature measures (and the additional
+weights corresponding to consecutive ranks) from sampling data,
+3. calculating the dimension normalized curvature measures.
+
+The difficulty of the first step lies again in the concentration effects.
+A random vector from the $\text{G}\beta\text{E}$ will have its index close to
+$n/2$ with high probability, making a simple rejection sampler
+(sample from $\text{G}\beta\text{E}$ then reject if the index is not in the
+required range) a practically infeasible approach.
+Instead we will use the Hamiltonian Monte-Carlo
+sampler [Stan](http://mc-stan.org/)
+([wikipedia](https://en.wikipedia.org/wiki/Stan_(software)))
+for this task.
+
+The second step is solved by adapting the expectation maximization (EM) approach
+for reconstructing the intrinsic volumes to the situation at hand.
+The required changes are minimal and and described below.
+
+The third step is just an implementation of the computation as explained
+[above](#ind_constr_cm) (methods 3,4)
+using [MOSEK](https://www.mosek.com/) for the second-order cone program.
+
+### Sampling index constrained eigenvalues {#sampl_constr_eigval}
+
+The sampler [Stan](http://mc-stan.org/) works solely through the log-likelihood
+function, which only has to be given up to additive constant (so the normalizing constant
+for the density does not have to be specified). Concretely, the density of
+$x\sim\text{G}\beta\text{E}$ is given by
+    \[ p(x) \propto e^{-\|x\|^2/2} \prod_{i<j} \big|x_i-x_j\big|^\beta . \]
+The corresponding log-likelihood is easily computed in Stan; the restriction on
+the index are realized by grouping the ordered eigenvalues into "positive", "free",
+"negative" and by requiring that the positive and negative ones do not change sign
+and the free eigenvalues lie between these two groups.
+
+Concretely, if $n=40$ and
+the index shall lie between $25$ and $35$, then we assume that the eigenvalues
+$x_1\leq x_2 \leq \dots \leq x_{40}$ are grouped into $5$ eigenvalues with negative
+sign, $x_1,\ldots,x_5$, $10$ eigenvalues with no prescribed sign,
+$x_6,\ldots,x_{15}$, and the remaining $25$ eigenvalues with positive sign,
+$x_{16},\ldots,x_{40}$.
+
+The function `constr_eigval` from the `symconivol` package generates the Stan model
+for the index constrained eigenvalue distribution. The models are slightly different
+for whether there are "positive", "free", or "negative",
+eigenvalues allowed. Passing this to the Stan sampler and then running it
+with the data (the Dyson index $\beta$ and the numbers of
+positive/free/negative eigenvalues) yields samples from the resulting index
+constrained eigenvalue distribution.
+
+**Example computations:**
+
+The following lines will construct a model for negative, 
+free, and positive eigenvalues, then run it for $5$ negative, $10$ free,
+and $25$ positive eigenvalues, and then extract the sampled eigenvalues:
+```{r constr_evals, eval=FALSE}
+filename <- "tmp.stan"
+constr_eigval( pos=TRUE, free=TRUE, neg=TRUE, filename=filename, overwrite=TRUE )
+data = list( beta=1, nn=5, nf=10, np=25 )
+stan_samp <- stan( file = filename, data = data, chains = 1, warmup = warmup,
+                   iter = 1e5, cores = 2, refresh = 1e4 )
+file.remove(filename)
+samp <- list( ep = rstan::extract(stan_samp)$ep,
+              ef = rstan::extract(stan_samp)$ef,
+              en = rstan::extract(stan_samp)$en )
+```
+The resulting empirical eigenvalue distribution(s) look as follows:
+```{r disp-eigv-01, echo=FALSE}
+img_dpi <- 300
+include_graphics("curv-meas_figures/nn_nf_np=5_10_25.png", dpi=img_dpi)
+```
+
+To illustrate the different situations we illustrate these empirical eigenvalue
+distributions for some more values for the parameters:
+
+* **$0$ negative, $15$ free, $25$ positive eigenvalues:**
+
+```{r disp-eigv-02, echo=FALSE}
+include_graphics("curv-meas_figures/nn_nf_np=0_15_25.png", dpi=img_dpi)
+```
+
+* **$16$ negative, $0$ free, $24$ positive eigenvalues:**
+
+```{r disp-eigv-03, echo=FALSE}
+include_graphics("curv-meas_figures/nn_nf_np=16_0_24.png", dpi=img_dpi)
+```
+
+* **$35$ negative, $5$ free, $0$ positive eigenvalues:**
+
+```{r disp-eigv-04, echo=FALSE}
+include_graphics("curv-meas_figures/nn_nf_np=35_5_0.png", dpi=img_dpi)
+```
+
+* **$20$ negative,  $0$ free, $0$ positive eigenvalues:**
+
+```{r disp-eigv-05, echo=FALSE}
+include_graphics("curv-meas_figures/nn_nf_np=20_0_0.png", dpi=img_dpi)
+```
+
+* **$0$ negative, $40$ free, $0$ positive eigenvalues:**
+
+```{r disp-eigv-06, echo=FALSE}
+include_graphics("curv-meas_figures/nn_nf_np=0_40_0.png", dpi=img_dpi)
+```
+
+* **$0$ negative, $0$ free, $40$ positive eigenvalues:**
+
+```{r disp-eigv-07, echo=FALSE}
+include_graphics("curv-meas_figures/nn_nf_np=0_0_40.png", dpi=img_dpi)
+```
+
+### Reconstructing index normalized curvature measures {#reconstr_ind}
+
+The weights of a bivariate chi-bar-squared distribution
+can be reconstructed as described in the vignette
+[Estimating conic intrinsic volumes from bivariate chi-bar-squared data](../../conivol/vignettes/estim-conic-intrinsic-volumes-with-EM.html)
+from the `conivol` package.
+We explain again the main idea behind this algorithm in the specific context
+of curvature measures.
+
+In the following we will assume that the index constraints are of the form
+$r\leq \text{ind}(x)\leq r+s$, that is, $R=\{r,\ldots,r+s\}$, and we
+assume $0< r< n$ and $0\leq s< n-r$.
+We assume strict inequalities so that we can assume that the positive and negative
+components of the eigenvalue vector are always nonzero
+(the cases of all positive or all negative eigenvalues are not interesting for
+the index/dimension normalized curvature measures).
+As explained [above](#curv_meas), we can turn a sample from the index constrained
+Gaussian orthogonal/unitary/symplectic ensemble into a sample from the bivariate
+chi-bar-squared distribution by taking the squared norms of
+the positive and negative components,
+    \[ (X,Y) = \big( \|x_+\|^2, \|x_-\|^2 \big) . \]
+The distribution of $(X,Y)$ can then be described in terms of the latent variable
+$Z$,
+    \[ \text{Prob}(Z=k) =
+    \frac{\sum_{j=0}^s \Phi_{k,r+j}}{\sum_{\ell=1}^{d-1} \sum_{j=0}^s
+    \Phi_{\ell,r+j}} , \]
+through the conditional distributions
+    \[ X\mid Z\sim \chi_Z^2,\quad Y\mid Z\sim \chi_{d-Z}^2 ,\quad
+        X\mid Z,\; Y\mid Z \text{ independent} . \]
+
+The Pataki bounds show that $\sum_{j=0}^s \Phi_{k,r+j}$ is nonzero iff
+  \[ r+\beta\binom{r}{2} \leq k \leq d - \Big( n-r-s + \beta \binom{n-r-s}{2} \Big) . \]
+In particular, since we assume that $0<r<n$ and $s<n-r$,
+the latent variable $Z$ will not
+take the values $0$ or $d$ with positive probability. So the latent variable is
+indeed entirely hidden, which is different from the
+[intrinsic volumes case](../../conivol/vignettes/estim-conic-intrinsic-volumes-with-EM.html).
+
+Assuming that we have $N$ samples
+$(\mathbf{X},\mathbf{Y})=\big((X_1,Y_1),\ldots,(X_N,Y_N)\big)$,
+the likelihood function, up to normalizing constant, is given by
+    \[ L(\Phi\mid \mathbf{X},\mathbf{Y}) \propto
+    \prod_{i=1}^N \sum_{k=1}^{d-1} f_{ik}\sum_{j=0}^s\Phi_{k,r+j} ,\qquad
+    f_{ik} = f_k(X_i) f_{d-k}(Y_i) , \]
+where $f_k(x)$ denotes the density of the chi-squared distribution,
+$f_k(x)\propto x^{k/2-1}e^{-x/2}$. Taking the latent variable
+into account, we obtain
+\begin{align*}
+    L(\Phi\mid \mathbf{X},\mathbf{Y},\mathbf{Z}) & \propto
+    \prod_{i=1}^N
+    \Big( f_{iZ_i}\sum_{j=0}^s\Phi_{Z_i,r+j} \Big) ,
+    \\ \log L(\Phi\mid \mathbf{X},\mathbf{Y},\mathbf{Z}) & =
+    \underbrace{\sum_{i=1}^N \log f_{iZ_i}}_{\text{(indep. of $\Phi$)}} +
+    \sum_{i=1}^N \log\Big(\sum_{j=0}^s\Phi_{Z_i,r+j}\Big) + \text{const} .
+\end{align*}
+
+The EM algorithm tries to find the maximum likelihood estimate of the parameters
+of the latent variable by maximizing the conditional likelihood function, with the
+likelihood of the data expressed in the latent variable, which are conditioned
+on the current iterate. Concretely, we express the posterior density for the $i$th
+latent variable in the form
+\begin{align*}
+    p\big(Z_i=k\mid X_i=x_i,Y_i=y_i\big) & =
+    \frac{p\big(X_i=x_i,Y_i=y_i\mid Z_i=k\big)\,p\big(Z_i=k\big)}{p(X_i=x_i,Y_i=y_i)}
+\\ & = \frac{f_{ik} \sum_{j=0}^s\Phi_{k,r+j}\big/\sum_{\ell=1}^{d-1}\sum_{j=0}^s\Phi_{\ell,r+j}}
+            {\sum_{\ell=1}^{d-1}f_{i\ell}\sum_{j=0}^s\Phi_{\ell,r+j}
+            \big/\sum_{\ell=1}^{d-1}\sum_{j=0}^s\Phi_{\ell,r+j}}
+\\ & = \frac{f_{ik} \sum_{j=0}^s\Phi_{k,r+j}}
+            {\sum_{\ell=1}^{d-1}f_{i\ell}\sum_{j=0}^s\Phi_{\ell,r+j}} .
+\end{align*}
+The EM algorithm then finds the $(t+1)$th iterate $\Phi^{(t+1)}$ from the
+$t$th iterate $\Phi^{(t)}$ by maximizing the following function in $\Phi$:
+\begin{align*}
+    \underset{\mathbf{Z}\mid \mathbf{X},\mathbf{Y},\Phi^{(t)}}{\text{E}}
+    \big[\log L\big(\Phi \,\big|\, \mathbf{X},\mathbf{Y},
+    \mathbf{Z} \big)\big] & = \sum_{i=1}^N \sum_{k=1}^{d-1}
+    \frac{f_{ik} \sum_{j=0}^s\Phi_{k,r+j}^{(t)}}
+            {\sum_{\ell=1}^{d-1}f_{i\ell}\sum_{j=0}^s\Phi_{\ell,r+j}^{(t)}}
+    \log\Big(\sum_{j=0}^s\Phi_{k,r+j}\Big)
+    + \text{const} .
+\end{align*}
+This function, which we divide by the number of samples to achieve a convergence
+of the constants,
+  \[ F(a_1,\ldots,a_{d-1}) = 
+    \sum_{k=1}^{d-1} \bigg( \frac{1}{N} \sum_{i=1}^N 
+    \frac{f_{ik} \sum_{j=0}^s\Phi_{k,r+j}^{(t)}}
+            {\sum_{\ell=1}^{d-1}f_{i\ell}\sum_{j=0}^s\Phi_{\ell,r+j}^{(t)}}\bigg)
+    \log a_k , \]
+can be maximized over the probability simplex as a separable convex program.
+In the `symconivol` package this is achieved via [MOSEK](https://www.mosek.com/).
+
+So this will be one step of the EM algorithm.
+
+**Log-concavity:**
+In the case of intrinsic volumes it has turned out that assuming log-concavity
+is essential for obtaining a stable convergence of the EM algorithm.
+Recall that a sequence $a_0,a_1,\ldots,a_d$ of positive numbers
+is log-concave if
+    \[ \log a_k \geq \frac{\log a_{k-1} + \log a_{k+1}}{2} . \]
+These inequalities can be easily enforced in the EM algorithm by projecting the 
+vector of the logarithm onto the convex cone formed by these sequences.
+
+In the case of intrinsic volumes the validity of these inequalities is a
+well-established conjecture. In the case of the curvature measures
+this is less well tested. Nevertheless, we will enforce log-concavity
+when reconstructing the curvature measures as this will stabilize
+the EM algorithm, and because it seems to be a reasonable assumption
+that improves the whole procedure work.
+
+**Example computations:**
+
+We evaluate the index constrained eigenvalue data from above with
+  \[ \beta=1 ,\; n=40 ,\; r=25 ,\; s=10 . \]
+The following lines transform the eigenvalue data first into bivariate chi-bar-squared
+data, then evaluate the densities for the EM algorithm, and then run the EM algorithm
+for $100$ iterations.
+
+```{r ind_norm_from_constr_eigval, fig.width = 7, fig.height=3}
+beta <- 1
+n <- 40
+r <- 25
+s <- 10
+pat <- pat_bnd(beta,n)
+print(str_c("dimension: d=", pat$d))
+# print(str_c("Pataki bounds: ",pat$k_low(r),", ",pat$k_upp(r+s)))
+# 
+# # load sample data:
+# load("../data/beta_nn_nf_np=1_5_10_25_wmup=1000.RData")
+# 
+# # convert sample data to bivariate chi-bar-squared data:
+# m_samp <- constr_eigval_to_bcbsq(pos=TRUE, free=TRUE, neg=TRUE, samp=samp)
+# 
+# # prepare data for EM algorithm:
+# data <- prepare_em_cm(d=pat$d, low=pat$k_low(r), upp=pat$k_upp(r+s), m_samp=m_samp)
+# 
+# # run EM algorithm for 100 steps:
+# em <- estim_em_cm(d=pat$d, low=pat$k_low(r), upp=pat$k_upp(r+s), m_samp=m_samp, N=100,
+#                   data=data, no_of_lcc_projections = 1)
+# 
+# # display some iterates of the EM algorithm
+# tib_plot <- as_tibble( t(em[1+10*(0:10), ]) ) %>%
+#     add_column(k=pat$k_low(r):pat$k_upp(r+s),.before=1) %>% gather(step,value,2:12)
+# ggplot(tib_plot,aes(x=k,y=value,color=step)) +
+#     geom_line() + theme_bw() +
+#     theme(legend.position="none", axis.title.x=element_blank(), axis.title.y=element_blank())
+```
+
+We can use this method to shed some light on the Pataki range, as displayed above
+for $n=3,6,10$. For the index normalized curvature measures we obtain the following
+picture:
+```{r illustr-ind-norm-cm, fig.width = 7, fig.height=12, echo=FALSE}
+plotsPB <- list()
+j <- 0
+for (beta in c(1,2,4)) {
+    for (n in c(3,6,10)) {
+        j <- j+1
+        
+        pat <- pat_bnd(beta,n)
+        d <- pat$d
+        n_grid <- 0:n
+        d_grid <- 0:d
+        pts <- expand.grid(d_grid,n_grid)
+        colnames(pts) <- c("k","r")
+        pts$PhiInd <- 0
+        load(file=str_c("../data/n=",n,"/PhiInd_beta=",beta,".RData"))
+        for (i in 1:dim(pts)[1]) {
+            r <- pts$r[i]
+            k <- pts$k[i]
+            if (r<ceiling(n/2)) {
+                r <- n-r
+                k <- d-k
+            }
+            if (k==d & r==n)
+                pts$PhiInd[i] <- 1
+            else if (k >= pat$k_low(r) & k <= pat$k_upp(r)) {
+                colPhi <- str_c("r=",r,",s=0")
+                pts$PhiInd[i] <- PhiInd[[colPhi]][k-pat$k_low(r)+1]/max(PhiInd[[colPhi]])
+            }
+        }
+        # plot of Pataki bounds
+        y_pat <- seq(0,1,length.out=1e2)
+        pat_bd_low <- tibble(patX=d*y_pat^2, patY=n*y_pat)
+        pat_bd_upp <- tibble(patX=d*(1-y_pat^2), patY=n*(1-y_pat))
+        # 
+        leighscurve <- leigh(1e3)$table
+        leighscurve$c <- leighscurve$rho*n
+        leighscurve$y <- leighscurve$kappa*d
+        plotsPB[[j]] <- ggplot() + 
+            geom_line(data=leighscurve,aes(x=c,y=y), linetype=2, alpha=0.5) +
+            geom_point(data=pts, aes(x=r, y=k, color=PhiInd), alpha=0.5) +
+            theme_bw() +
+            xlab(TeX(sprintf("$n=%d,\\; \\beta = %d\\; (d=%d)$", n, beta, n+beta*choose(n,2)))) +
+            theme(legend.position="none", 
+                  axis.title.y=element_blank(),
+                  axis.text.x=element_blank(), axis.text.y=element_blank(),
+                  axis.ticks.x=element_blank(), axis.ticks.y=element_blank(),
+                  panel.border = element_blank(), panel.grid.major = element_blank(),
+                  panel.grid.minor = element_blank(),
+                  axis.line = element_line(colour = "black")
+            ) +
+            scale_colour_gradient2() +
+            geom_line(data=pat_bd_low, aes(patY, patX), linetype=2, alpha=0.5) +
+            geom_line(data=pat_bd_upp, aes(patY, patX), linetype=2, alpha=0.5)
+    }
+}
+multiplot(plotlist = plotsPB, cols = 3)
+```
+The dashed curves indicate the asymptotic Patali range and *Leigh's curve*,
+which we describe [below](#leighscurve) in more details. Notice the apparent
+convergence of the index constrained curvature measures to this curve.
+
+### Reconstructing dimension normalized curvature measures {#reconstr_dim}
+
+For the reconstruction of the dimension normalized curvature measures we proceed
+as described [above](#ind_constr_cm) in the third reconstruction method.
+The only adjustment that we make is that we assume that
+$\lceil\frac{n}{2}\rceil\leq r<n$ and $0\leq s<n_r$ for symmetry reasons and
+for avoiding subtleties with the Gaussian volume of the cone. We will thus use
+the second-order program to solve for the unnormalized curvature measures,
+which we then renormalize according to the dimension.
+
+**Example computations:**
+
+We reconstruct the same range again as above, $n=3,6,10$:
+```{r illustr-dim-norm-cm, fig.width = 7, fig.height=12, echo=FALSE}
+plotsPB <- list()
+# j <- 0
+# for (beta in c(1,2,4)) {
+#     for (n in c(3,6,10)) {
+#         j <- j+1
+# 
+#         load(file=str_c("../data/n=",n,"/PhiInd_beta=",beta,".RData"))
+#         pat <- pat_bnd(beta,n)
+#         d <- pat$d
+#         # find parameter range of Phi
+#         R <- ceiling(n/2):(n-1)
+#         N <- sum( pat$k_upp(R) - pat$k_low(R) + 1 )
+#         rng_Phi <- tibble(r=rep(0,N),k=0)
+#         i <- 0
+#         size_rng_b <- 0
+#         for (r in R) {
+#             newN <- pat$k_upp(r) - pat$k_low(r) + 1
+#             rng_Phi$r[i+1:newN] <- r
+#             rng_Phi$k[i+1:newN] <- pat$k_low(r):pat$k_upp(r)
+#             i <- i + newN
+#             size_rng_b <- size_rng_b + sum(pat$k_upp(r:(n-1)) - pat$k_low(r) + 1)
+#         }
+#         # set constants for normalization
+#         if (n%%2==0) {
+#             midN <- pat$k_upp(n/2) - pat$k_low(n/2) + 1
+#             const_norm <- c(rep(1,midN),rep(2,N-midN))
+#         } else {
+#             const_norm <- rep(2,N)
+#         }
+#         # find parameter range of b and find constants a
+#         rng_b <- tibble(r=rep(0,size_rng_b),s=0,k=0)
+#         a <- rep(0,size_rng_b)
+#         i <- 0
+#         for (r in R) {
+#             for (s in 0:(n-r-1)) {
+#                 newN <- pat$k_upp(r+s) - pat$k_low(r) + 1
+#                 rng_b$r[i+1:newN] <- r
+#                 rng_b$s[i+1:newN] <- s
+#                 rng_b$k[i+1:newN] <- pat$k_low(r):pat$k_upp(r+s)
+#                 colPhi <- str_c("r=",r,",s=",s)
+#                 # print(colPhi)
+#                 a[i+1:newN] <- PhiInd[[colPhi]]
+#                 i <- i + newN
+#             }
+#         }
+#         # create MOSEK input
+#         mos_inp <- list(sense = "min")
+#         mos_inp$A <- Matrix::Matrix(0,size_rng_b+1,N+2+size_rng_b,sparse=TRUE)
+#         for (i in 1:size_rng_b) {
+#             r <- rng_b$r[i]
+#             s <- rng_b$s[i]
+#             k <- rng_b$k[i]
+#             mos_inp$A[i,1:N][rng_Phi$r>=r & rng_Phi$r<=r+s] <- a[i]
+#             mos_inp$A[i,1:N][rng_Phi$r>=r & rng_Phi$r<=r+s & rng_Phi$k==k] <- -1
+#             mos_inp$A[i,N+2+i] <- -1
+#         }
+#         mos_inp$A[size_rng_b+1,1:N] <- const_norm
+#         mos_inp$c <- c( rep(0,N), 1, 0, rep(0,size_rng_b) )
+#         mos_inp$bc <- rbind(blc = c(rep(0,size_rng_b),1),
+#                             buc = c(rep(0,size_rng_b),1))
+#         mos_inp$bx <- rbind(blx = c(rep(0,N),0,1,rep(-Inf,size_rng_b)),
+#                             bux = c(rep(0.5,N),Inf,1,rep(Inf,size_rng_b)))
+#         mos_inp$cones <- matrix( list("RQUAD", c(N+1,N+2,(N+3):(N+2+size_rng_b))), 2, 1 )
+#         rownames(mos_inp$cones) <- c("type", "sub")
+# 
+#         #################################
+#         # set return messages from MOSEK (verbose=0 enforces silent mode)
+#         opts <- list(verbose=0)
+#         #################################
+#         mos_out <- Rmosek::mosek(mos_inp, opts)
+#         PhiUnc <- mos_out$sol$itr$xx[1:N]
+# 
+#         n_grid <- 0:n
+#         d_grid <- 0:d
+#         pts <- expand.grid(d_grid,n_grid)
+#         colnames(pts) <- c("k","r")
+#         pts$PhiDim <- 0
+#         # first, expand the unconstrained curvature measures
+#         for (i in 1:dim(pts)[1]) {
+#             r <- pts$r[i]
+#             k <- pts$k[i]
+#             if (r<ceiling(n/2)) {
+#                 r <- n-r
+#                 k <- d-k
+#             }
+#             if (k==d & r==n)
+#                 pts$PhiDim[i] <- 1
+#             else if (k >= pat$k_low(r) & k <= pat$k_upp(r)) {
+#                 pts$PhiDim[i] <- PhiUnc[rng_Phi$r==r & rng_Phi$k==k]
+#             }
+#         }
+#         # second, normalize in dimension
+#         for (k in 1:(d-1)) {
+#             I <- pts$k==k
+#             pts$PhiDim[I] <- pts$PhiDim[I]/max(pts$PhiDim[I])
+#             # pts$PhiDim[I] <- pts$PhiDim[I]/sum(pts$PhiDim[I])
+#         }
+# 
+#         # plot of Pataki bounds
+#         y_pat <- seq(0,1,length.out=1e2)
+#         pat_bd_low <- tibble(patX=d*y_pat^2, patY=n*y_pat)
+#         pat_bd_upp <- tibble(patX=d*(1-y_pat^2), patY=n*(1-y_pat))
+#         leighscurve <- leigh(1e3)$table
+#         leighscurve$c <- leighscurve$rho*n
+#         leighscurve$y <- leighscurve$kappa*d
+# 
+#         plotsPB[[j]] <- ggplot() +
+#             geom_line(data=leighscurve,aes(x=c,y=y), linetype=2, alpha=0.5) +
+#             geom_point(data=pts, aes(x=r, y=k, color=PhiDim), alpha=0.5) +
+#             theme_bw() +
+#             xlab(TeX(sprintf("$n=%d,\\; \\beta = %d\\; (d=%d)$", n, beta, n+beta*choose(n,2)))) +
+#             theme(legend.position="none",
+#                 axis.title.y=element_blank(),
+#                 axis.text.x=element_blank(), axis.text.y=element_blank(),
+#                 axis.ticks.x=element_blank(), axis.ticks.y=element_blank(),
+#                 panel.border = element_blank(), panel.grid.major = element_blank(),
+#                 panel.grid.minor = element_blank(),
+#                 axis.line = element_line(colour = "black")
+#             ) + scale_colour_gradient2() +
+#             geom_line(data=pat_bd_low, aes(patY, patX), linetype=2, alpha=0.5) +
+#             geom_line(data=pat_bd_upp, aes(patY, patX), linetype=2, alpha=0.5)
+#     }
+# }
+# multiplot(plotlist = plotsPB, cols = 3)
+```
+
+### Looking ahead with artificial data
+
+The above reconstructions are not too helpful in recognizing the higher-dimensional
+behavior of the dimension normalized curvature measures, as the dimension size $n$
+is too small. 
+
+(next: show the result of the reconstruction method, state that it's not enough
+    to see anything, then continue by first finding an estimate for the
+    standard deviation (noting that the expectation is understood), then
+    reconstruct the dimension normalized curvature measures for artificial data)
+
+asdf
+
+**The variance of the intrinsic volumes:**
+```{r est-var-intrvol, fig.width = 7, fig.height=4, echo=FALSE}
+nmin <- 3
+nmax <- 10
+plotsPB <- list()
+j <- 0
+for (beta in c(1,2,4)) {
+    var_plt <- tibble(n=nmin:nmax,d=0,var=0)
+    for (n in nmin:nmax) {
+        pat <- pat_bnd(beta,n)
+        d <- pat$d
+        N <- 1e5
+        warmup <- 1e3
+        load(str_c("../data/n=",n,"/bcbsq_beta_nn_nf_np_N=",beta,"_0_",n,"_0_",N,"_wmup=",warmup,".RData"))
+        var_plt$d[n-nmin+1] <- d
+        var_plt$var[n-nmin+1] <- estim_statdim_var(d,m_samp)$var
+    }
+    j <- j+1
+    plotsPB[[j]] <- ggplot(var_plt,aes(x=n,y=var)) + geom_line() +
+        geom_line(aes(x=n,y=d*(8/pi^2-1/2)),color="red") + theme_bw() +
+        xlab(TeX(sprintf("$\\beta = %d$", beta))) +
+        theme(axis.title.y=element_blank())
+}
+multiplot(plotlist = plotsPB, cols = 3)
+```
+
+
+**Estimating the variance of index normalized curvature measures:**
+```{r est-var-indnormcm, fig.width = 7, fig.height=6, echo=FALSE}
+nmin <- 3
+nmax <- 10
+plotsPB <- list()
+j <- 0
+for (beta in c(1,2,4)) {
+    j <- j+1
+    
+    var_plot <- list()
+    for (n in nmin:nmax) {
+        pat <- pat_bnd(beta,n)
+        load(file=str_c("../data/n=",n,"/PhiInd_beta=",beta,".RData"))
+        i <- n-nmin+1
+        var_plot[[i]] <- rep(0,n+1)
+        for (r in ceiling(n/2):(n-1)) {
+            k_low <- pat$k_low(r)
+            k_upp <- pat$k_upp(r)
+            colPhi <- str_c("r=",r,",s=0")
+            Phi <- PhiInd[[colPhi]]
+            var_new <- sum((k_low:k_upp)^2*Phi)-sum((k_low:k_upp)*Phi)^2
+            var_plot[[i]][1+r] <- var_new
+            var_plot[[i]][1+n-r] <- var_new
+        }
+        names(var_plot)[i] <- str_c("n=",n)
+    }
+
+    # tidying data
+    tib_plot <- tibble()
+    for (n in nmin:nmax) {
+        tib_new <- tibble( r=0:n, var=var_plot[[str_c("n=",n)]], n=n, beta=beta, d=pat_bnd(beta,n)$d )
+        tib_plot <- bind_rows(tib_plot,tib_new)
+    }
+    x <- seq(0,1,length.out=1e3)
+
+    plotsPB[[j]] <- ggplot(tib_plot, aes(x=r/n, y=var/d*5, group=n, color=as.factor(n) )) +
+        geom_line() + theme_bw() + scale_color_discrete(name="n") +
+        theme(legend.position="bottom", axis.title.y=element_blank()) +
+        xlab(TeX(sprintf("$\\beta = %d$", beta))) +
+        geom_line(data=tibble(x=x,y=(1-2*abs(x-0.5))),aes(x=x,y=y),
+                  color="black", linetype=2, size=2, alpha=0.2)
+}
+multiplot(plotlist = plotsPB, cols = 3)
+```
+
+
+** Reconstructing dimension normalized curvature measures from artificial data: **
+```{r illustr-dim-norm-cm-artif, fig.width = 7, fig.height=12, echo=FALSE}
+est_var_ivol <- function(beta,n) {
+    return( (n+beta*choose(n,2))*(8/pi^2-1/2) )
+}
+est_var_indnormcm <- function(beta,n,est_const=5) {
+    return( (n+beta*choose(n,2))/est_const*(1-2*abs((0:n)/n-0.5)) )
+}
+plotsPB <- list()
+j <- 0
+# L <- leigh(1e4)
+# for (beta in c(1,2,4)) {
+#     for (n in c(10,12,15)) {
+#         pat <- pat_bnd(beta,n)
+#         d <- pat$d
+# 
+#         # find estimate for intrinsic volumes
+#         v <- init_ivols(d,1,d/2,est_var_ivol(beta,n))
+#         v <- (v+rev(v))/2
+# 
+#         # find estimate for index normalized curvature measures
+#         PhiInd <- list()
+#         i <- 0
+#         est_var <- est_var_indnormcm(beta,n)
+#         for (r in (ceiling(n/2):(n-1))) {
+#             i <- i+1
+#             delta <- d * L$lkup_kappa(r/n) - pat$k_low(r)
+#             PhiInd[[i]] <- init_ivols( pat$k_upp(r)-pat$k_low(r)+1, 1, delta, est_var[r+1] )
+#             names(PhiInd)[i] <- str_c("r=",r,",s=0")
+#         }
+#         
+#         # find parameter range of Phi
+#         R <- ceiling(n/2):(n-1)
+#         N <- sum( pat$k_upp(R) - pat$k_low(R) + 1 )
+#         rng_Phi <- tibble(r=rep(0,N),k=0)
+#         i <- 0
+#         for (r in R) {
+#             newN <- pat$k_upp(r) - pat$k_low(r) + 1
+#             rng_Phi$r[i+1:newN] <- r
+#             rng_Phi$k[i+1:newN] <- pat$k_low(r):pat$k_upp(r)
+#             i <- i + newN
+#         }
+#         # set constants for normalization
+#         if (n%%2==0) {
+#             midN <- pat$k_upp(n/2) - pat$k_low(n/2) + 1
+#             const_norm <- c(rep(1,midN),rep(2,N-midN))
+#         } else {
+#             const_norm <- rep(2,N)
+#         }
+#         # find size of parameter range of b
+#         size_rng_b <- N + d-1-ceiling(d/2)+1
+# 
+#         # create MOSEK input
+#         mos_inp <- list(sense = "min")
+#         mos_inp$A <- Matrix::Matrix(0,size_rng_b+1,N+2+size_rng_b,sparse=TRUE)
+#         for (i in 1:N) {
+#             r <- rng_Phi$r[i]
+#             k <- rng_Phi$k[i]
+# 
+#             a <- PhiInd[[ str_c("r=",r,",s=0") ]][ k-pat$k_low(r)+1 ]
+#             mos_inp$A[i,1:N][rng_Phi$r==r] <- a
+#             mos_inp$A[i,1:N][rng_Phi$r==r & rng_Phi$k==k] <- -1
+#             mos_inp$A[i,N+2+i] <- -1
+#         }
+#         for (k in ceiling(d/2):(d-1)) {
+#             I <- which( rng_Phi$k==k )
+#             i <- i+1
+#             mos_inp$A[i,1:N][I] <- const_norm[I]
+#             mos_inp$A[i,N+2+i] <- 1
+#         }
+#         mos_inp$A[size_rng_b+1,1:N] <- const_norm
+# 
+#         mos_inp$c <- c( rep(0,N), 1, 0, rep(0,size_rng_b) )
+#         mos_inp$bc <- rbind(blc = c(rep(0,N), v[1+ceiling(d/2):(d-1)],1),
+#                             buc = c(rep(0,N), v[1+ceiling(d/2):(d-1)],1))
+#         mos_inp$bx <- rbind(blx = c(rep(0,N),0,1,rep(-Inf,size_rng_b)),
+#                             bux = c(rep(0.5,N),Inf,1,rep(Inf,size_rng_b)))
+#         mos_inp$cones <- matrix( list("RQUAD", c(N+1,N+2,(N+3):(N+2+size_rng_b))), 2, 1 )
+#         rownames(mos_inp$cones) <- c("type", "sub")
+# 
+#         #################################
+#         # set return messages from MOSEK (verbose=0 enforces silent mode)
+#         opts <- list(verbose=0)
+#         #################################
+#         mos_out <- Rmosek::mosek(mos_inp, opts)
+#         PhiUnc <- mos_out$sol$itr$xx[1:N]
+# 
+#         n_grid <- 0:n
+#         d_grid <- 0:d
+#         pts <- expand.grid(d_grid,n_grid)
+#         colnames(pts) <- c("k","r")
+#         pts$PhiDim <- 0
+#         # first, expand the unconstrained curvature measures
+#         for (i in 1:dim(pts)[1]) {
+#             r <- pts$r[i]
+#             k <- pts$k[i]
+#             if (r<ceiling(n/2)) {
+#                 r <- n-r
+#                 k <- d-k
+#             }
+#             if (k==d & r==n) {
+#                 pts$PhiDim[i] <- 1
+#             } else if (k >= pat$k_low(r) & k <= pat$k_upp(r)) {
+#                 pts$PhiDim[i] <- PhiUnc[rng_Phi$r==r & rng_Phi$k==k]
+#             }
+#         }
+#         # second, normalize in dimension
+#         for (k in 1:(d-1)) {
+#             I <- pts$k==k
+#             pts$PhiDim[I] <- pts$PhiDim[I]/sum(pts$PhiDim[I])
+#         }
+# 
+#         y_pat <- seq(0,1,length.out=1e2)
+#         pat_bd_low <- tibble(patX=d*y_pat^2, patY=n*y_pat)
+#         pat_bd_upp <- tibble(patX=d*(1-y_pat^2), patY=n*(1-y_pat))
+#         leighscurve <- L$table
+#         leighscurve$c <- leighscurve$rho*n
+#         leighscurve$y <- leighscurve$kappa*d
+#         j <- j+1
+#         plotsPB[[j]] <- ggplot() +
+#             geom_line(data=leighscurve,aes(x=c,y=y), linetype=2, alpha=0.5) +
+#             geom_point(data=pts, aes(x=r, y=k, color=PhiDim), alpha=0.5) +
+#             theme_bw() +
+#             xlab(TeX(sprintf("$n=%d,\\; \\beta = %d\\; (d=%d)$", n, beta, n+beta*choose(n,2)))) +
+#             theme(legend.position="none",
+#                   axis.title.y=element_blank(),
+#                   axis.text.x=element_blank(), axis.text.y=element_blank(),
+#                   axis.ticks.x=element_blank(), axis.ticks.y=element_blank(),
+#                   panel.border = element_blank(), panel.grid.major = element_blank(),
+#                   panel.grid.minor = element_blank(),
+#                   axis.line = element_line(colour = "black")
+#             ) +
+#             scale_colour_gradient2() +
+#             geom_line(data=pat_bd_low, aes(patY, patX), linetype=2, alpha=0.5) +
+#             geom_line(data=pat_bd_upp, aes(patY, patX), linetype=2, alpha=0.5)
+#     }
+# }
+# multiplot(plotlist = plotsPB, cols = 3)
+```
+
+
+## Asymptotics for index constrained curvature measures
+
+--what we will do--
+
+### Semi-circle
+
+It is well known that the empirical distribution function of the eigenvalues,
+    \[ \frac{1}{n} \sum_{j=1}^n\delta_{x_j}(t) ,\quad
+    (x_1,\ldots,x_n) \sim \text{G}\beta\text{E} , \]
+approximates a
+[semi-circle distribution](https://en.wikipedia.org/wiki/Wigner_semicircle_distribution)
+in high dimensions. More precisely, in order to obtain this limit one has to rescale
+the eigenvalues by $1/\sqrt{n}$, and in order to obtain the limit distribution 
+independent of the Dyson index one additionally rescales by by $1/\sqrt{\beta}$:
+    \[ g(t) = \frac{1}{n} \sum_{j=1}^n\delta_{y_j}(t) ,\quad
+    y=\frac{x}{\sqrt{\beta n}} ,\quad x \sim \text{G}\beta\text{E} , \]
+converges almost surely to the semicircle distribution with support
+$[-\sqrt{2},\sqrt{2}]$. Before modifying this model to the case of a fixed index
+ratio, let us have a look at some example cases to illustrate this wonderful
+classical result.
+
+**Example computations:**
+
+We find the empirical distribution through iterated sampling (sample size $10^5$).
+For $n=10$ we obtain the following picture:
+
+```{r semic-1, echo=FALSE}
+include_graphics("curv-meas_figures/semic_n=10.png", dpi=img_dpi)
+```
+
+For $n=40$ the convergence becomes evident:
+
+```{r semic-2, echo=FALSE}
+include_graphics("curv-meas_figures/semic_n=40.png", dpi=img_dpi)
+```
+
+### Limit distribution for fixed index ratio
+
+The case of a fixed index ratio was considered in [@MNSV11]; they considered the
+empirical distribution function
+    \[ g_r(t) = \frac{1}{n} \sum_{j=1}^n\delta_{y_j}(t) ,\quad
+    y=\frac{x}{\sqrt{\beta n}} ,\quad x \sim \text{G}\beta\text{E}\mid\text{ind}=r , \]
+and found the limit distribution for the case $\frac{r}{n}\to \rho$. (The semicircle is found
+in the case $\rho=1/2$.)
+
+Denoting the limit distribution by $g_\rho^*$, by symmetry, we have $g_\rho^*(t)=g_{1-\rho}^*(-t)$,
+and for $\frac{1}{2}\leq \rho\leq 1$ the distribution $g_\rho^*$ can be found as follows:
+
+* find the parameter $a$ by inverting the following function:
+    \[ \rho = \frac{2}{\pi}\Big(1-\frac{a-1}{a^2}\Big)^{-1}
+    \int_0^1 \sqrt{\frac{1-y}{y}}\sqrt{y^2+y+y+\frac{a-1}{a^2}}dy , \]
+* find the scale of the positive and negative support,
+    $L\,[0,1]$ and $L\,[-1/a,-(1-1/a)]$, respectively, via
+    \[ L = \sqrt{\frac{2}{1-\frac{a-1}{a^2}}} , \]
+* the limit distribution is then given by
+    \[ g_\rho^*(t) = \frac{1}{\pi}\sqrt{\frac{(L-x)(L+ax)(L-L/a+x)}{ax}} . \]
+
+To illustrate, the graphs of the parameters $a$ and $L/\sqrt{2}$:
+```{r illustr_params_MNSV, fig.width = 7, fig.height=3, echo=FALSE}
+rho_a <- function(a) {
+    integrand <- function(x) return(sqrt((1-x)/x*(x^2+x+(a-1)/a^2)))
+    return(2/pi/(1-(a-1)/a^2)*integrate(integrand, lower=0, upper=1)$value)
+}
+L_a <- function(a) return(a*sqrt(2/(a^2-a+1)))
+a <- seq(1,2,length.out=1e3)
+rho <- sapply(a, rho_a)
+L2 <- sapply(a, L_a)
+params <- tibble(a=a, rho=rho, L2=L2)
+plotsParams <- list()
+plotsParams[[1]] <- ggplot(params, aes(x=rho,y=a)) +
+    geom_line() + theme_bw() +
+    xlab(TeX("$\\rho$")) + ylab(TeX("$a$"))
+plotsParams[[2]] <- ggplot(params, aes(x=rho,y=L2)) + ylab("L/sqrt(2)") +
+    geom_line() + theme_bw() +
+    xlab(TeX("$\\rho$")) + ylab(TeX("$L/\\sqrt{2}$"))
+multiplot(plotlist = plotsParams, cols = 2)
+```
+
+And the resulting densities for $\rho=0.6,0.7,0.8,0.9,1$:
+```{r lim_dens_MNSV, fig.width = 7, fig.height=5, echo=FALSE, warning=FALSE}
+bnd_a <- function(a) {
+    L <- L_a(a)
+    return(list(neg_low=-L/a, neg_upp=-L*(1-1/a), pos_low=0, pos_upp=L))
+}
+rho_a <- function(a,moment=0) {
+    L <- L_a(a)
+    return( function(x) x^moment/pi*sqrt( (L-x)/x * (x+L/a) * (x+(1-1/a)*L) ) )
+}
+rho0_L <- c(0.6,0.7,0.8,0.9,1)
+hues = seq(15, 375, length = length(rho0_L) + 1)
+mycolors <- hcl(h = hues, l = 65, c = 100)[1:length(rho0_L)]
+data_neg <- tibble()
+data_pos <- tibble()
+for (rho0 in rho0_L) {
+    ind <- which.min((rho-rho0)^2)
+    a0 <- a[ind]
+    bnd <- bnd_a(a0)
+    x_neg <- seq(bnd$neg_low,bnd$neg_upp,length.out=1e3)
+    x_pos <- seq(bnd$pos_low,bnd$pos_upp,length.out=1e3)
+    y_neg <- sapply(x_neg, rho_a(a0))
+    y_pos <- sapply(x_pos, rho_a(a0))
+    data_neg <- bind_rows(data_neg, tibble(x=x_neg, y=y_neg, rho=as.factor(rho0)))
+    data_pos <- bind_rows(data_pos, tibble(x=x_pos, y=y_pos, rho=as.factor(rho0)))
+}
+ggplot() + coord_cartesian(ylim = c(0, 2)) + theme_bw() +
+    theme(legend.position="none",
+          axis.title.y=element_blank(), axis.title.x=element_blank()) +
+    geom_line(data=data_neg, aes(x=x,y=y,group=rho,color=rho)) +
+    geom_line(data=data_pos, aes(x=x,y=y,group=rho,color=rho)) +
+    scale_colour_manual(values=mycolors)
+```
+
+**Example computations:**
+
+We illustrate the asymptotics for the fixed ratio case as in the case of the
+semicircle. For $\rho=0.6$ we obtain for $n=10$:
+```{r indlim-1, echo=FALSE}
+include_graphics("curv-meas_figures/indlim_n_cPerc=10_60.png", dpi=img_dpi)
+```
+
+For $n=40$ the convergence becomes evident:
+```{r indlim-2, echo=FALSE}
+include_graphics("curv-meas_figures/indlim_n_cPerc=40_60.png", dpi=img_dpi)
+```
+
+Similarly, for $\rho=0.8$ we obtain for $n=10$:
+```{r indlim-3, echo=FALSE}
+include_graphics("curv-meas_figures/indlim_n_cPerc=10_80.png", dpi=img_dpi)
+```
+
+For $n=40$ we obtain the following picture:
+```{r indlim-4, echo=FALSE}
+include_graphics("curv-meas_figures/indlim_n_cPerc=40_80.png", dpi=img_dpi)
+```
+
+
+### Limit curve for index constrained curvature measures {#leighscurve}
+
+Recall the notation for the empirical distribution function in the index constrained
+case:
+    \[ g_r(t) = \frac{1}{n} \sum_{j=1}^n\delta_{y_j}(t) ,\quad
+    y=\frac{x}{\sqrt{\beta n}} ,\quad x \sim \text{G}\beta\text{E}\mid\text{ind}=r . \]
+Similarly, we define the empirical distribution function for fixed $x$,
+    \[ g_x(t) = \frac{1}{n} \sum_{j=1}^n\delta_{y_j}(t) ,\quad
+    y=\frac{x}{\sqrt{\beta n}} . \]
+We can use this to express the squared norm of the positive part:
+  \[ \|x_+\|^2 = n\int_0^\infty \big(\sqrt{\beta}nt\big)^2 g_x(t) dt
+  = \beta n^2\int_0^\infty t^2 g_x(t) dt , \]
+and similarly the squared norm of the negative part,
+$\|x_-\|^2=\beta n^2\int_{-\infty}^0 t^2 g_x(t) dt$.
+The convergence of the distribution function implies^[This statement depends
+on the type of convergence of the empirical distribution function. In fact,
+the paper [@MNSV11] is a bit nonrigorous concerning these technical details.
+But the close connection between the empirical distribution function and the
+squared norms of the positive and negative parts allows for derivations of
+rigorous convergence results for these from similar results for the empirical
+distribution function. Also note that one can write the squared norm of the eigenvalues
+as the trace of the squared matrix, which yields another slightly different perspective,
+which in the unconstrained case is well understood. Again, the difference to the classical
+case lies in the constraints on the index and the replacement of the negative
+eigenvalues with zero.]
+the concentration of $\frac{\|x_+\|^2}{d}$ (recall that $d\approx\beta n^2/2$)
+around its mean,
+  \[ \text{E}\Big[\frac{\|x_+\|^2}{d}\Big] = \frac{\beta n^2}{d}
+  \int_0^\infty t^2 g_r(t) dt , \]
+which itself converges, for $n\to\infty$, to
+  \[ \ell(\rho) = 2 \int_0^\infty t^2 g_\rho^*(t) dt . \]
+We call the curve $\ell\colon[0,1]\to[0,1]$ *Leigh's curve*:
+```{r leighscurve, fig.width = 7, fig.height=7, echo=FALSE}
+int_neg <- function(a) {
+    bnd <- bnd_a(a)
+    return(integrate(rho_a(a,2),lower=bnd$neg_low,upper=bnd$neg_upp)$value)
+}
+leigh <- 2*sapply(a, int_neg)
+y_pat <- seq(0,1,length.out=1e2)
+pat_bd_low <- tibble(patX=y_pat^2, patY=y_pat)
+pat_bd_upp <- tibble(patX=1-y_pat^2, patY=1-y_pat)
+ggplot() + 
+    geom_line(data=tibble(rho=1-rho,y=leigh),  aes(rho,y)) +
+    geom_line(data=tibble(rho=rho,  y=1-leigh),aes(rho,y)) +
+    theme_bw() +
+    geom_line(data=pat_bd_low, aes(patY, patX), linetype=2, alpha=0.5) +
+    geom_line(data=pat_bd_upp, aes(patY, patX), linetype=2, alpha=0.5) +
+    xlab(TeX("$\\rho$")) + ylab(TeX("$\\kappa$"))
+```
+The dashed curves indicate the (asymptotic) Pataki range.
+
+* Formulate the conjecture that both index normalized as well as dimension
+    normalized curvature measures concentrate in high dimensions around Leigh's curve
+
+## Application in semidefinite programming {#appl_SDP}
+
+* the dimension normalized curvature measures appear in the probability distribution
+    of the rank of the solution of a random SDP
+* describe the random model
+* give the formula
+* argue why the model makes sense, and why it's a natural starting point
+* suggest that Leigh's curve can be used for predicting the rank of the solution
+    of an SDP **no, don't do this!**
+
+## Appendix: Comparing curvature measures and algeblgebraic degree {#alg_deg}
+
+
+## References
+
+
+
+
+
+
+
+
+
+
+
