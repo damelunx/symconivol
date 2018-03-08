@@ -2,4 +2,38 @@ title: symconivol
 url: http://damelunx.github.io/symconivol
 template:
   params:
-    bootswatch: sandstone
+    bootswatch: yeti
+reference:
+  - title: Exported Functions
+    desc: ~
+    contents:
+      - '`curv_meas_exact`'
+      - '`pat_bnd`'
+      - '`leigh`'
+      - '`constr_eigval`'
+      - '`constr_eigval_to_bcbsq`'
+      - '`prepare_em_cm`'
+      - '`estim_em_cm`'
+      - '`indnorm_to_unnorm`'
+      - '`leigh`'
+      - '`alg_deg`'
+navbar:
+  type: inverse
+  left:
+    - icon: fa-home
+      href: index.html
+    - text: "Introduction"
+      href: articles/symconivol.html
+    - text: "Study"
+      menu:
+        - text: Main
+          href: articles/curv_meas.html
+        - text: Technical addendum
+          href: articles/curv_meas_tech.html
+  right:
+    - icon: fa-file-code-o 
+      text: "functions"
+      href: reference/index.html
+    - icon: fa-github fa-lg
+      text: "github"
+      href: https://github.com/damelunx/symconivol

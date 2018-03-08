@@ -1,18 +1,24 @@
 Package: symconivol
-Type: Package
-Title: Curvature measures of symmetric cones
 Version: 0.0.0.900
+Title: A package for curvature measures of symmetric cones
+Description: The symconivol package provides functions for
+    analyzing intrinsic volumes and curvature measures of
+    symmetric cones, as well as the Gaussian orthogonal ensembles
+    conditioned on the index function.
 Authors@R: as.person(
         "Dennis Amelunxen <damelunx@gmail.com> [aut, cre]"
     )
-Description: --TBD--
 License: GPL-3
-Encoding: UTF-8
-LazyData: true
-Suggests: knitr,
-    rmarkdown,
-    testthat
-VignetteBuilder: knitr
-RoxygenNote: 6.0.1
 Imports: Rmosek,
     Matrix
+Suggests: knitr,
+    rmarkdown,
+    testthat,
+    tidyverse
+VignetteBuilder: knitr
+URL: https://damelunx.github.io/symconivol, http://github.com/damelunx/symconivol
+BugReports: https://github.com/damelunx/symconivol/issues
+RoxygenNote: 6.0.1
+Encoding: UTF-8
+LazyData: true
+

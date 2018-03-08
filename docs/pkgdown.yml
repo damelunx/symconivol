@@ -31,4 +31,8 @@ articles:
   curv_meas_tech: curv_meas_tech.html
   data_plot_generation.R: data_plot_generation.R
   references.bib: references.bib
+  symconivol: symconivol.html
+urls:
+  reference: http://damelunx.github.io/symconivol/reference
+  article: http://damelunx.github.io/symconivol/articles
 
