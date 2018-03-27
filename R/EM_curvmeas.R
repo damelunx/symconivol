@@ -1,14 +1,15 @@
-#' Converting samples of index constrained eigenvalues to samples of bivariate-chi-bar-squared distribution
+#' Converting samples of index constrained eigenvalues to samples of bivariate chi-bar-squared distribution
 #' 
-#' \code{constr_eigval_to_bcbsq}
+#' \code{constr_eigval_to_bcbsq} converts samples of the index constrained
+#' eigenvalue distribution to samples of the corresponding bivariate
+#' chi-bar-squared distribution.
 #' 
-#' @param pos parameter description
-#' @param free parameter description
-#' @param neg parameter description
-#' @param samp parameter description
-#' @param filename parameter description
+#' @param samp a list containing (a selection of) the elements \'ep\', \'ef\', \'en\',
+#'             which are matrices (of the same length) whose rows give the sampled eigenvalues
 #' 
-#' @return returns what
+#' @return The output of \code{constr_eigval_to_bcbsq} is a two-column matrices
+#'         whose rows correspond to the samples from the bivariate
+#'         chi-bar-squared distribution.
 #' 
 #' @section See also:
 #' \code{\link[symconivol]{constr_eigval}}, 
@@ -18,23 +19,26 @@
 #' Package: \code{\link[symconivol]{symconivol}}
 #' 
 #' @examples
-#' # some example code
+#' library(tidyverse)
+#' library(rstan)
+#' 
+#' filename <- "tmp.stan"
+#' M <- constr_eigval( beta=2, n=12, ind_low=8, ind_upp=9, filename=filename )
+#' stan_samp <- stan( file = filename, data = M$data,
+#'                    chains = 1, warmup = 1e3, iter = 1e5, cores = 2, refresh = 1e4 )
+#' file.remove(filename)
+#' 
+#' m_samp <- constr_eigval_to_bcbsq( rstan::extract(stan_samp) )
 #' 
 #' @export
 #'
-constr_eigval_to_bcbsq <- function(pos, free, neg, samp=NA, filename=NA) {
-    if ( !pos & !free & !neg ) stop("\n Empty model.")
-    if ( (is.na(samp) && is.na(filename)) || (!is.na(samp) && !is.na(filename)) )
-        stop("\n Must give either sample matrix or sample file.")
-    if ( !is.na(filename) && !file.exists(filename) )
-        stop("\n File with given filename does not exist.")
-
-    if ( !is.na(filename) ) {
-        e <- new.env()
-        samp_str <- load(file=filename, envir=e)
-        samp <- get(samp_str, envir=e)
-    }
+constr_eigval_to_bcbsq <- function(samp) {
+    neg  <- "en" %in% names(samp)
+    free <- "ef" %in% names(samp)
+    pos  <- "ep" %in% names(samp)
     
+    if ( !pos & !free & !neg ) stop("\n Empty model (list elements have to be named \'ep\', \'ef\', \'en\' for positive, free, negative eigenvalues, respectively.")
+
     if (pos)        n <- dim(samp$ep)[1]
     else if (free)  n <- dim(samp$ef)[1]
     else if (neg)   n <- dim(samp$en)[1]
@@ -153,7 +157,7 @@ prepare_em_cm <- function(d, low, upp, m_samp) {
 #' is always the uniform distribution, and the parity equation,
 #' which does not hold for curvature measures, will not be enforced.
 #' 
-#' @param d the dimension of the bivariate chi-bar squared distribution.
+#' @param d the dimension of the bivariate chi-bar-squared distribution.
 #' @param low lower bound for \code{k}; has to be \code{>0}
 #' @param upp upper bound for \code{k}; has to be \code{<d}
 #' @param m_samp two-column matrix whose rows from iid samples from a bivariate

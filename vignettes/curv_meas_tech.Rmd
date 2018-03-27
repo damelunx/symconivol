@@ -3,6 +3,7 @@ title: "Studying curvature measures of symmetric cones - Technical details"
 author: "Dennis Amelunxen"
 date: "15 February, 2018"
 output: rmarkdown::html_vignette
+# output: rmarkdown::pdf_document
 bibliography: references.bib
 link-citations: true
 ---
@@ -14,6 +15,7 @@ knitr::opts_chunk$set(
   fig.path = "curv-meas_figures/"
 )
 ```
+
 
 This note contains technical details to the vignette 
 [Studying curvature measures of symmetric cones](curv_meas.html).
@@ -133,9 +135,6 @@ for (i in 1:dim(nn_nf_np_list)[1]) {
 **Reconstructing dimension normalized curvature measures:**
 
 **Plots of empirical distribution of index constrained eigenvalues:**
-
-
-
 
 
 

@@ -11,7 +11,7 @@ alg_deg(n)
 }
 \value{
 The output of \code{alg_deg} is a table of the algebraic degrees
-        for the given value of \code{n}. To avoid loss of loss of precision,
+        for the given value of \code{n}. To avoid loss of precision,
         the algebraic degrees are given as strings. See the below example for
         a simple conversion to numeric, including the problems associated with
         that step.
@@ -19,6 +19,11 @@ The output of \code{alg_deg} is a table of the algebraic degrees
 \description{
 \code{alg_deg} produces a table for the algebraic degree of semidefinite
 programmin (see the accompanying vignette for reference to literature).
+}
+\details{
+Only some precomputed values of \code{n} are available. See the literature
+referenced in the accompanying vignette for general (combinatorial) formulas
+for the algebraic degree.
 }
 \section{See also}{
 

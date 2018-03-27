@@ -8,7 +8,7 @@ estim_em_cm(d, low, upp, m_samp, N = 20, no_of_lcc_projections = 1,
   data = NULL)
 }
 \arguments{
-\item{d}{the dimension of the bivariate chi-bar squared distribution.}
+\item{d}{the dimension of the bivariate chi-bar-squared distribution.}
 
 \item{low}{lower bound for \code{k}; has to be \code{>0}}
 
