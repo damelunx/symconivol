@@ -1,8 +1,9 @@
 ---
 title: "Study on curvature measures of symmetric cones"
 author: "Dennis Amelunxen"
-date: "22 February, 2018"
+date: "27 March, 2018"
 output: rmarkdown::html_vignette
+# output: rmarkdown::pdf_document
 bibliography: references.bib
 link-citations: true
 ---
@@ -109,7 +110,7 @@ provided in [this technical note](curv_meas_tech.html).
     enforcing log-concavity of the intrinsic volumes.
 
 
-## Symmetric cones
+## Symmetric cones {#symm_cones}
 
 [Symmetric cones](https://en.wikipedia.org/wiki/Symmetric_cone) are self-dual convex cones
 with a transitive group of symmetries. Every symmetric cone decomposes into an
@@ -222,7 +223,7 @@ Yet another characterization of the curvature measures is obtained through
 the rank distribution of the solution of a (Gaussian) random semidefinite program;
 see the [final section](#appl_SDP) of this note for more details.
 
-### Pataki bounds
+### Pataki bounds {#pat_bnds}
 
 Not all curvature measures $\Phi_{kr}$, $0\leq k\leq d$, $0\leq r\leq n$, are
 nonzero. In fact, the support of $\Phi_{kr}$ is accurately described by two
@@ -266,7 +267,7 @@ We illustrate these inequalities for $n=3,6,10$, $\beta=1,2,4$:
 $(\frac{r}{n})^2 \leq \frac{k}{d} \leq 1-(1-\frac{r}{n})^2$
 are indicated by the dashed curves)
 
-```{r illustr-pat-bds, fig.width = 7, fig.height=12, echo=FALSE}
+```{r illustr-pat-bds, fig.width = 7, fig.height=12, echo=FALSE, fig.align="center"}
 plotsPB <- list()
 i <- 0
 for (beta in c(1,2,4)) {
@@ -371,7 +372,7 @@ Moreover, we can use this to approximate the values of $\phi_r$,
         \approx \log\Phi^{\text{ind}}_{kr} - \beta n^2 f(\tfrac{r}{n}) . \]
 We will use this approach below when looking ahead with artificial data.
 
-## Implementations
+## Implementations {#implem}
 
 Having explained the general approach, it remains to implement the computations,
 which consist of three parts:
@@ -440,8 +441,10 @@ samp <- list( ep = rstan::extract(stan_samp)$ep,
               ef = rstan::extract(stan_samp)$ef,
               en = rstan::extract(stan_samp)$en )
 ```
+
 The resulting empirical eigenvalue distribution(s) look as follows:
-```{r disp-eigv-01, echo=FALSE}
+
+```{r disp-eigv-01, echo=FALSE, fig.align="center"}
 img_dpi <- 300
 include_graphics("nn_nf_np=5_10_25.png", dpi=img_dpi)
 ```
@@ -451,37 +454,37 @@ distributions for some more values for the parameters:
 
 * **$0$ negative, $15$ free, $25$ positive eigenvalues:**
 
-```{r disp-eigv-02, echo=FALSE}
+```{r disp-eigv-02, echo=FALSE, fig.align="center"}
 include_graphics("nn_nf_np=0_15_25.png", dpi=img_dpi)
 ```
 
 * **$16$ negative, $0$ free, $24$ positive eigenvalues:**
 
-```{r disp-eigv-03, echo=FALSE}
+```{r disp-eigv-03, echo=FALSE, fig.align="center"}
 include_graphics("nn_nf_np=16_0_24.png", dpi=img_dpi)
 ```
 
 * **$35$ negative, $5$ free, $0$ positive eigenvalues:**
 
-```{r disp-eigv-04, echo=FALSE}
+```{r disp-eigv-04, echo=FALSE, fig.align="center"}
 include_graphics("nn_nf_np=35_5_0.png", dpi=img_dpi)
 ```
 
 * **$20$ negative,  $0$ free, $0$ positive eigenvalues:**
 
-```{r disp-eigv-05, echo=FALSE}
+```{r disp-eigv-05, echo=FALSE, fig.align="center"}
 include_graphics("nn_nf_np=20_0_0.png", dpi=img_dpi)
 ```
 
 * **$0$ negative, $40$ free, $0$ positive eigenvalues:**
 
-```{r disp-eigv-06, echo=FALSE}
+```{r disp-eigv-06, echo=FALSE, fig.align="center"}
 include_graphics("nn_nf_np=0_40_0.png", dpi=img_dpi)
 ```
 
 * **$0$ negative, $0$ free, $40$ positive eigenvalues:**
 
-```{r disp-eigv-07, echo=FALSE}
+```{r disp-eigv-07, echo=FALSE, fig.align="center"}
 include_graphics("nn_nf_np=0_0_40.png", dpi=img_dpi)
 ```
 
@@ -632,8 +635,10 @@ G <- ggplot(tib_plot,aes(x=k,y=value,color=step)) +
     geom_line() + theme_bw() +
     theme(legend.position="none", axis.title.x=element_blank(), axis.title.y=element_blank())
 ```
+
 The resulting plot looks as follows:
-```{r ind_norm_from_constr_eigval-3, echo=FALSE}
+
+```{r ind_norm_from_constr_eigval-3, echo=FALSE, fig.align="center"}
 # # image obtained through the following command:
 # ggsave("ind_norm_from_constr_eigval.png", plot=G, device="png",
 #        width=178, height=80, units="mm", dpi=300)
@@ -643,7 +648,8 @@ include_graphics("ind_norm_from_constr_eigval.png", dpi=img_dpi)
 We can use this method to shed some light on the Pataki range, as displayed above
 for $n=3,6,10$. For the index normalized curvature measures we obtain the following
 picture:
-```{r illustr-ind-norm-cm, fig.width = 7, fig.height=12, echo=FALSE}
+
+```{r illustr-ind-norm-cm, fig.width = 7, fig.height=12, echo=FALSE, fig.align="center"}
 plotsPB <- list()
 plotPhiInd <- list()
 j <- 0
@@ -677,6 +683,7 @@ for (beta in c(1,2,4)) {
 }
 multiplot(plotlist = plotsPB, cols = 3)
 ```
+
 The dashed curves indicate the asymptotic Patali range and *Leigh's curve*,
 which we describe [below](#leighscurve) in more details. Notice the apparent
 convergence of the index constrained curvature measures to this curve.
@@ -689,7 +696,8 @@ as described [above](#ind_constr_cm).
 **Example computations:**
 
 We reconstruct the same range again as above, $n=3,6,10$:
-```{r illustr-dim-norm-cm, fig.width = 7, fig.height=12, echo=FALSE}
+
+```{r illustr-dim-norm-cm, fig.width = 7, fig.height=12, echo=FALSE, fig.align="center"}
 plotsPB <- list()
 plotPhiDim <- list()
 j <- 0
@@ -750,7 +758,7 @@ an "eye-balled" value for an essential parameter defining the curve).
 This curve is interesting because it can be used to predict the
 rank of the solution of semidefinite programs (see [below](#appl_SDP)).
 
-## Looking ahead
+## Looking ahead {#look_ahead}
 
 In this sectioin we try to get a better insight in the higher dimensional
 behavior of the dimension normalized curvature measures. We will do this by
@@ -763,7 +771,7 @@ curvature measures. It is nevertheless a reasonable assumption to make that they
 obey a central limit law. We will make this assumption in this section to get an idea about what
 happens in higher dimensions for the dimension normalized curvature measures.
 
-### The rate function of the index probabilities
+### The rate function of the index probabilities {#rate_fct}
 
 In [@MNSV11] it was shown that
     \[ \log\text{Prob}\{\text{ind}(x)=r\} \approx
@@ -772,7 +780,7 @@ for some rate function $R$, for which they give an explicit formula
 (see [below](#ratefct) for details on the calculation of $R$).
 The graphs of the rate function $R$ and its derivative look as follows:
 
-```{r rate-fct, fig.width = 7, fig.height=4, echo=FALSE}
+```{r rate-fct, fig.width = 7, fig.height=4, echo=FALSE, fig.align="center"}
 R <- rate()
 pL <- list(
     ggplot(R$table,  aes(x=rho,y=R))  + geom_line() + theme_bw() +
@@ -798,7 +806,7 @@ The following plots compare the empirically estimated log of the ratio of probab
 for neighboring indices with the approximate asymptotic expressions (the estimate
 through the derivative of the rate function is depicted as the red dashed curve):
 
-```{r approx-indprobrat, fig.width = 7, fig.height=6, echo=FALSE}
+```{r approx-indprobrat, fig.width = 7, fig.height=6, echo=FALSE, fig.align="center"}
 plotIndP <- list()
 IndP <- list()
 j <- 0
@@ -888,7 +896,7 @@ multiplot(plotlist=plotIndP, cols=3)
 <!-- ``` -->
 
 
-### The variance of the intrinsic volumes
+### The variance of the intrinsic volumes {#var_ivol}
 
 Before considering the curvature measures, we mention that the variance of the
 intrinsic volumes $v=(\sum_r \Phi_{kr})$ have a variance of approximating
@@ -896,7 +904,7 @@ $d\big(\frac{8}{\pi^2}-\frac{1}{2}\big)$. More precisely, this was shown in [@Mc
 for $\beta=1$, but as the following estimates using the bivariate chi-bar-squared
 distribution suggest, the formula should also hold for $\beta=2,4$.
 
-```{r est-var-ivol, echo=FALSE}
+```{r est-var-ivol, echo=FALSE, fig.align="center"}
 include_graphics("var_ivol.png", dpi=img_dpi)
 ```
 
@@ -905,8 +913,50 @@ include_graphics("var_ivol.png", dpi=img_dpi)
 So far, no asymptotic estimates for the variance of the index normalized curvature measures
 are known. We obtain the following plots for the estimated values:
 
-```{r est-var-PhiInd, echo=FALSE}
-include_graphics("var_PhiInd.png", dpi=img_dpi)
+```{r est-var-PhiInd, echo=FALSE, fig.align="center"}
+nmin <- 3
+nmax <- 10
+plotsPB <- list()
+j <- 0
+C <- 0.2
+for (beta in c(1,2,4)) {
+    j <- j+1
+    var_plot <- list()
+    for (n in nmin:nmax) {
+        pat <- pat_bnd(beta,n)
+        ind1 <- str_c("beta=",beta,",n=",n)
+        i <- n-nmin+1
+        var_plot[[i]] <- rep(0,n+1)
+        for (r in ceiling(n/2):(n-1)) {
+            k_low <- pat$k_low(r)
+            k_upp <- pat$k_upp(r)
+            ind2 <- str_c("r=",r,",s=0")
+            Phi <- symconivol::phi_ind[[ind1]][[ind2]]
+            var_new <- sum((k_low:k_upp)^2*Phi)-sum((k_low:k_upp)*Phi)^2
+            var_plot[[i]][1+r] <- var_new
+            var_plot[[i]][1+n-r] <- var_new
+        }
+        names(var_plot)[i] <- str_c("n=",n)
+    }
+
+    # tidying data
+    tib_plot <- tibble()
+    for (n in nmin:nmax) {
+        tib_new <- tibble( r=0:n, var=var_plot[[str_c("n=",n)]], n=n, beta=beta, d=pat_bnd(beta,n)$d )
+        tib_plot <- bind_rows(tib_plot,tib_new)
+    }
+    x <- seq(0,1,length.out=1e3)
+
+    plotsPB[[j]] <- ggplot(tib_plot, aes(x=r/n, y=var/d, group=n, color=as.factor(n) )) +
+        geom_line() + theme_bw() + scale_color_discrete(name="n") +
+        theme(legend.position="bottom", axis.title.y=element_blank(),
+              panel.border = element_blank(), panel.grid.major = element_blank(),
+              axis.line = element_line(colour = "black")) +
+        xlab(TeX(sprintf("$\\beta = %d$", beta))) +
+        geom_line(data=tibble(x=x,y=(1-2*abs(x-0.5))*C),aes(x=x,y=y),
+                  color="black", linetype=1, size=1.5, alpha=0.2)
+}
+multiplot(plotlist = plotsPB, cols = 3)
 ```
 
 The above plots show the normalized empirical variance of $\Phi^{\text{ind}}_{kr}$,
@@ -921,7 +971,7 @@ measures can be approximated in the form
     \[ C\,d\,\big(1-\big|\tfrac{2r}{n}-1\big|\big) , \]
 for some constant $C$ ($\approx 0.2$).
 
-### Reconstructing dimension normalized curvature measures from artificial data
+### Reconstructing dimension normalized curvature measures from artificial data {#rec_art}
 
 Combining the assumption of a central limit law for the index normalized
 curvature measures with the above guess for their variance, we obtain
@@ -935,7 +985,7 @@ rate function of the index probabilities,
 which results in the following pictures for the estimated dimension normalized
 curvature measures:
 
-```{r illustr-dim-norm-cm_artif, fig.width = 7, fig.height=12, echo=FALSE}
+```{r illustr-dim-norm-cm_artif, fig.width = 7, fig.height=12, echo=FALSE, fig.align="center"}
 plotsPB <- list()
 plotPhiDim <- list()
 j <- 0
@@ -998,18 +1048,18 @@ the minimum (in $\rho$) of
 We can find these minima via a simple table lookup procedure.
 The resulting curves (for different values of $C$) look as follows:
 
-```{r disp-lim-PhiDim, echo=FALSE}
+```{r disp-lim-PhiDim, echo=FALSE, fig.align="center"}
 include_graphics("lim_PhiDim.png", dpi=img_dpi)
 ```
 
 
-## Deriving the asymptotics for index constrained curvature measures
+## Deriving the asymptotics for index constrained curvature measures {#asym_indnorm}
 
 In this section we provide more details about the rate function and Leigh's curve.
 These are given and derived from [@MNSV11], whose formulas we reproduce and
 illustrate here.
 
-### Semi-circle
+### Semi-circle {#semicirc}
 
 It is well known that the empirical distribution function of the eigenvalues,
     \[ \frac{1}{n} \sum_{j=1}^n\delta_{x_j}(t) ,\quad
@@ -1031,13 +1081,13 @@ classical result.
 We find the empirical distribution through iterated sampling (sample size $10^5$).
 For $n=10$ we obtain the following picture:
 
-```{r semic-1, echo=FALSE}
+```{r semic-1, echo=FALSE, fig.align="center"}
 include_graphics("semic_n=10.png", dpi=img_dpi)
 ```
 
 For $n=40$ the convergence becomes evident:
 
-```{r semic-2, echo=FALSE}
+```{r semic-2, echo=FALSE, fig.align="center"}
 include_graphics("semic_n=40.png", dpi=img_dpi)
 ```
 
@@ -1060,7 +1110,7 @@ the authors use the parameter $a=b+1$.]
     where
     \[ L = \frac{\sqrt{2}\;(1+b)}{\sqrt{1+b+b^2}} , \]
 
-```{r illustr_params_MNSV, fig.width = 7, fig.height=3, echo=FALSE}
+```{r illustr_params_MNSV, fig.width = 7, fig.height=3, echo=FALSE, fig.align="center"}
 rho_a <- function(a) {
     integrand <- function(x) return(sqrt((1-x)/x*(x^2+x+(a-1)/a^2)))
     return(2/pi/(1-(a-1)/a^2)*integrate(integrand, lower=0, upper=1)$value)
@@ -1085,7 +1135,7 @@ multiplot(plotlist = plotsParams, cols = 2)
     and the function values within these intervals are given by
     \[ g_\rho^*(L\,t) = \frac{L}{\pi(1+b)}\sqrt{\frac{(1-t)\;(1+t(1+b))\;(b+t(1+b))}{t}} . \]
 
-```{r lim_dens_MNSV, fig.width = 7, fig.height=4, echo=FALSE, warning=FALSE}
+```{r lim_dens_MNSV, fig.width = 7, fig.height=4, echo=FALSE, warning=FALSE, fig.align="center"}
 bnd_a <- function(a) {
     L <- L_a(a)
     return(list(neg_low=-L/a, neg_upp=-L*(1-1/a), pos_low=0, pos_upp=L))
@@ -1140,29 +1190,29 @@ For [later use](#leighscurve) we also mention the complete elliptic integral of 
 
 We illustrate the asymptotics for the fixed ratio case as in the case of the
 semicircle. For $\rho=0.6$ we obtain for $n=10$:
-```{r indlim-1, echo=FALSE}
+```{r indlim-1, echo=FALSE, fig.align="center"}
 include_graphics("indlim_n_cPerc=10_60.png", dpi=img_dpi)
 ```
 
 For $n=40$ the convergence becomes evident:
-```{r indlim-2, echo=FALSE}
+```{r indlim-2, echo=FALSE, fig.align="center"}
 include_graphics("indlim_n_cPerc=40_60.png", dpi=img_dpi)
 ```
 
 Similarly, for $\rho=0.8$ we obtain for $n=10$:
-```{r indlim-3, echo=FALSE}
+```{r indlim-3, echo=FALSE, fig.align="center"}
 include_graphics("indlim_n_cPerc=10_80.png", dpi=img_dpi)
 ```
 
 For $n=40$ we obtain the following picture:
-```{r indlim-4, echo=FALSE}
+```{r indlim-4, echo=FALSE, fig.align="center"}
 include_graphics("indlim_n_cPerc=40_80.png", dpi=img_dpi)
 ```
 
 ### Calculating the rate function {#ratefct}
 
 In [@MNSV11] (equation (92)) the following formula for the rate function $R(\rho)$
-has been given:
+(for $\rho>\frac{1}{2}$; $R(\rho)=R(1-\rho)$) has been given:
 \begin{align*}
     & R(\rho) = \frac{L^2-1-\log(2L^2)}{4} + \frac{\rho}{2} \int_1^{\infty}
      tL^2-\frac{1}{t}-\frac{L^2}{1+b}\sqrt{\frac{(t-1)\;(1+t(1+b))\;(b+t(1+b))}{t}}\,dt
@@ -1173,7 +1223,7 @@ has been given:
 \end{align*}
 with $b$ and $L$ as defined [above](#limdist_indfct).
 The rate function $R(\rho)$ is accessible via `rate()` from the
-`symconivol` package.
+`symconivol` package. See [above](#rate_fct) for plots of $R(\rho)$ and its derivative.
 
 
 ### Limit curve for index normalized curvature measures {#leighscurve}
@@ -1188,7 +1238,7 @@ Similarly, we define the empirical distribution function for fixed $x$,
 so that
     \[ g_r(t) = g(x;t) \quad \text{if } x \sim \text{G}\beta\text{E}\mid\text{ind}=r . \]
 We can use this function to express the squared norm of the positive part of $x$:
-  \[ \|x_+\|^2 = n\int_0^\infty \big(\sqrt{\beta}nt\big)^2 g(x;t) dt
+  \[ \|x_+\|^2 = n\int_0^\infty \big(\sqrt{\beta n}\,t\big)^2 g(x;t) dt
   = \beta n^2\int_0^\infty t^2 g(x;t) dt , \]
 and similarly the squared norm of the negative part of $x$,
 $\|x_-\|^2=\beta n^2\int_{-\infty}^0 t^2 g(x;t) dt$.
@@ -1224,7 +1274,7 @@ It can be expressed in terms of elliptic integrals in the following way:
 \end{align*}
 Here is a plot of this curve:
 
-```{r leighscurve, fig.width = 7, fig.height=7, echo=FALSE}
+```{r leighscurve, fig.width = 7, fig.height=7, echo=FALSE, fig.align="center"}
 int_neg <- function(a) {
     bnd <- bnd_a(a)
     return(integrate(rho_a(a,2),lower=bnd$neg_low,upper=bnd$neg_upp)$value)
@@ -1239,8 +1289,9 @@ ggplot() +
     theme_bw() +
     geom_line(data=pat_bd_low, aes(patY, patX), linetype=2, alpha=0.5) +
     geom_line(data=pat_bd_upp, aes(patY, patX), linetype=2, alpha=0.5) +
-    xlab(TeX("$\\rho$")) + ylab(TeX("$\\kappa$"))
+    xlab(TeX("$\\rho$")) + ylab(TeX("$\\ell(\\rho)$"))
 ```
+
 The dashed curves indicate as usual the (asymptotic) Pataki range.
 We conjecture, and it seems apparent from the example computations
 [above](#reconstr_ind), that the index normalized curvature measures converge
@@ -1321,7 +1372,7 @@ satisfying the Pataki inequalities is the algebraic degree of semidefinite
 programming $\delta(m,n,r)$, defined in [@NRS10].
 (It would be interesting to have some theory about the cases $\beta=2,4$, but
 so far this seems to have not been addressed.)
-More precisely, $\delta(m,n,r)$ with $1\leq m\leq n-1$ is nonzero iff
+More precisely, $\delta(m,n,r)$ with $1\leq m\leq n-1$ is nonzero only if
     \[ r+\binom{r}{2} \leq d-m \leq d-\Big(n-r+\binom{n-r}{2}\Big) . \]
 Some values of the algebraic degree (for $n\leq 14$) are accessible via the
 function `alg_deg()` from the `symconivol` package. The values were computed
@@ -1339,7 +1390,7 @@ That is, we compare the normalized marginals with the (normalized)
 rate $\exp(-n^2R(r/n))$ and with the normal distribution with mean $d/2$
 and variance $d\big(\frac{8}{\pi^2}-\frac{1}{2}\big)$, respectively:
 
-```{r illustr-marg-ad, fig.width = 7, fig.height=8, echo=FALSE}
+```{r illustr-marg-ad, fig.width = 7, fig.height=8, echo=FALSE, fig.align="center"}
 plotsAD <- list()
 j <- 0
 for (n in c(4,8,14)) {
@@ -1384,7 +1435,7 @@ In the same way we compare the two normalized measures
 where we use the parameter $k=d-m$ for a better comparison with the
 above plots for the normalized curvature measures.
 
-```{r illustr-norm-ad, fig.width = 7, fig.height=8, echo=FALSE}
+```{r illustr-norm-ad, fig.width = 7, fig.height=8, echo=FALSE, fig.align="center"}
 plotsAD <- list()
 j <- 0
 for (n in c(5,8,14)) {
@@ -1407,7 +1458,7 @@ for (n in c(5,8,14)) {
 multiplot(plotlist = plotsAD, cols = 3)
 ```
 
-## References
+## References {#refs}
 
 
 

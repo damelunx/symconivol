@@ -64,7 +64,7 @@
   </a>
 </li>
 <li>
-  <a href="../articles/symconivol.html">Introduction</a>
+  <a href="../reference/symconivol.html">Overview</a>
 </li>
 <li class="dropdown">
   <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
@@ -88,7 +88,7 @@
   <a href="../reference/index.html">
     <span class="fa fa-file-code-o"></span>
      
-    functions
+    functions &amp; data
   </a>
 </li>
 <li>
@@ -111,7 +111,7 @@
     <div class="page-header">
       <h1>
         Reference
-        <small>version&nbsp;0.0.0.900</small>
+        <small>version&nbsp;0.0.1</small>
       </h1>
     </div>
 
@@ -151,6 +151,18 @@
         </tr><tr>
           <!--  -->
           <td>
+            <p><code><a href="rate.html">rate</a></code> </p>
+          </td>
+          <td><p>Large deviation rate function for index probability</p></td>
+        </tr><tr>
+          <!--  -->
+          <td>
+            <p><code><a href="mu.html">mu</a></code> </p>
+          </td>
+          <td><p>Estimated limit curve for the dimension normalized curvature measures</p></td>
+        </tr><tr>
+          <!--  -->
+          <td>
             <p><code><a href="constr_eigval.html">constr_eigval</a></code> </p>
           </td>
           <td><p>Stan model creation for sampling index constrained eigenvalues from the Gaussian orthogonal/unitary/symplectic ensembles</p></td>
@@ -159,7 +171,7 @@
           <td>
             <p><code><a href="constr_eigval_to_bcbsq.html">constr_eigval_to_bcbsq</a></code> </p>
           </td>
-          <td><p>Converting samples of index constrained eigenvalues to samples of bivariate-chi-bar-squared distribution</p></td>
+          <td><p>Converting samples of index constrained eigenvalues to samples of bivariate chi-bar-squared distribution</p></td>
         </tr><tr>
           <!--  -->
           <td>
@@ -175,13 +187,39 @@
         </tr><tr>
           <!--  -->
           <td>
-            <p><code><a href="indnorm_to_unnorm.html">indnorm_to_unnorm</a></code> </p>
+            <p><code><a href="alg_deg.html">alg_deg</a></code> </p>
           </td>
-          <td><p>Estimating curvature measures from index normalized curvature measures</p></td>
+          <td><p>Algebraic degree of semidefinite programming</p></td>
+        </tr>
+      </tbody><tbody>
+        <tr>
+          <th colspan="2">
+            <h2 id="section-data" class="hasAnchor"><a href="#section-data" class="anchor"></a>Data</h2>
+            <p class="section-desc"></p>
+          </th>
+        </tr>
+        <tr>
+          <!--  -->
+          <td>
+            <p><code><a href="ind_prob.html">ind_prob</a></code> </p>
+          </td>
+          <td><p>Ratios of index probabilities</p></td>
         </tr><tr>
           <!--  -->
           <td>
-            <p><code><a href="alg_deg.html">alg_deg</a></code> </p>
+            <p><code><a href="phi_ind.html">phi_ind</a></code> </p>
+          </td>
+          <td><p>Reconstructed values of index constrained curvature measures</p></td>
+        </tr><tr>
+          <!--  -->
+          <td>
+            <p><code><a href="mu_data.html">mu_data</a></code> </p>
+          </td>
+          <td><p>Values of estimated limit curve of dimension normalized curvature measures</p></td>
+        </tr><tr>
+          <!--  -->
+          <td>
+            <p><code><a href="alg_deg_data.html">alg_deg_data</a></code> </p>
           </td>
           <td><p>Algebraic degree of semidefinite programming</p></td>
         </tr>
@@ -194,6 +232,7 @@
     <h2>Contents</h2>
     <ul class="nav nav-pills nav-stacked">
       <li><a href="#section-exported-functions">Exported Functions</a></li>
+      <li><a href="#section-data">Data</a></li>
     </ul>
   </div>
 </div>

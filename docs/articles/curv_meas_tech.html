@@ -39,7 +39,7 @@
   </a>
 </li>
 <li>
-  <a href="../articles/symconivol.html">Introduction</a>
+  <a href="../reference/symconivol.html">Overview</a>
 </li>
 <li class="dropdown">
   <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
@@ -62,7 +62,7 @@
   <a href="../reference/index.html">
     <span class="fa fa-file-code-o"></span>
      
-    functions
+    functions &amp; data
   </a>
 </li>
 <li>
@@ -87,13 +87,13 @@
       <h1>Studying curvature measures of symmetric cones - Technical details</h1>
                         <h4 class="author">Dennis Amelunxen</h4>
             
-            <h4 class="date">15 February, 2018</h4>
+            <h4 class="date">27 March, 2018</h4>
           </div>
 
     
     
 <div class="contents">
-<p>This note contains technical details to the vignette <a href="curv_meas.html">Studying curvature measures of symmetric cones</a>. More precisely, we will provide the code that generates those plots, which are only included as image files and not created in the markdown file.</p>
+<p>This note contains technical details to the vignette <a href="curv_meas.html">Studying curvature measures of symmetric cones</a>. We will provide the code that generates those plots, which are only included as image files and not created in the markdown file.</p>
 <p><strong>Packages used:</strong></p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(symconivol)
 <span class="kw">library</span>(conivol)
@@ -154,8 +154,9 @@ for (i in <span class="dv">1</span>:<span class="kw">length</span>(nn_nf_np_list
 <p><strong>Plots of empirical distribution of index constrained eigenvalues:</strong> The following lines produce the plots of the empirical distribution of the index constrained eigenvalues sampled above.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">colors &lt;-<span class="st"> </span><span class="kw">hcl</span>(<span class="dt">h =</span> <span class="kw">seq</span>(<span class="dv">15</span>, <span class="dv">375</span>, <span class="dt">length=</span><span class="dv">4</span>), <span class="dt">l =</span> <span class="dv">65</span>, <span class="dt">c =</span> <span class="dv">100</span>)[<span class="kw">c</span>(<span class="dv">2</span>,<span class="dv">3</span>,<span class="dv">1</span>)]
 ymax &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="fl">0.18</span>,<span class="fl">0.16</span>,<span class="fl">0.16</span>,<span class="fl">0.24</span>,<span class="fl">0.6</span>,<span class="fl">0.5</span>,<span class="fl">0.083</span>,<span class="dv">0</span>,<span class="kw">rep</span>(<span class="fl">0.9</span>,<span class="dv">2</span>),<span class="kw">rep</span>(<span class="fl">1.3</span>,<span class="dv">2</span>))
+I &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="dv">1</span>,<span class="dv">2</span>,<span class="dv">6</span>,<span class="dv">7</span>,<span class="dv">8</span>,<span class="dv">10</span>,<span class="dv">11</span>)
 
-for (i in <span class="dv">1</span>:<span class="kw">dim</span>(nn_nf_np_list)[<span class="dv">1</span>]) {
+for (i in I) {
     nn &lt;-<span class="st"> </span>nn_nf_np_list[[i,<span class="dv">1</span>]]
     nf &lt;-<span class="st"> </span>nn_nf_np_list[[i,<span class="dv">2</span>]]
     np &lt;-<span class="st"> </span>nn_nf_np_list[[i,<span class="dv">3</span>]]
@@ -168,29 +169,151 @@ for (i in <span class="dv">1</span>:<span class="kw">dim</span>(nn_nf_np_list)[<
                              <span class="st">"_"</span>,np,<span class="st">"_"</span>,num_samp,<span class="st">"_wmup="</span>,warmup,<span class="st">".RData"</span>)
         <span class="kw">load</span>(<span class="dt">file=</span>fname_evals)
         tmp &lt;-<span class="st"> </span><span class="kw">tibble</span>()
-        if (np&gt;<span class="dv">0</span>) tmp &lt;-<span class="st"> </span><span class="kw">bind_rows</span>(tmp,samp$ep %&gt;%<span class="st"> </span><span class="kw">as_tibble</span>() %&gt;%<span class="st"> </span><span class="kw">gather</span>(<span class="dt">factor_key=</span><span class="ot">TRUE</span>) %&gt;%<span class="st"> </span><span class="kw">add_column</span>(<span class="dt">type=</span><span class="st">"0"</span>))
-        if (nf&gt;<span class="dv">0</span>) tmp &lt;-<span class="st"> </span><span class="kw">bind_rows</span>(tmp,samp$ef %&gt;%<span class="st"> </span><span class="kw">as_tibble</span>() %&gt;%<span class="st"> </span><span class="kw">gather</span>(<span class="dt">factor_key=</span><span class="ot">TRUE</span>) %&gt;%<span class="st"> </span><span class="kw">add_column</span>(<span class="dt">type=</span><span class="st">"1"</span>))
-        if (nn&gt;<span class="dv">0</span>) tmp &lt;-<span class="st"> </span><span class="kw">bind_rows</span>(tmp,samp$en %&gt;%<span class="st"> </span><span class="kw">as_tibble</span>() %&gt;%<span class="st"> </span><span class="kw">gather</span>(<span class="dt">factor_key=</span><span class="ot">TRUE</span>) %&gt;%<span class="st"> </span><span class="kw">add_column</span>(<span class="dt">type=</span><span class="st">"2"</span>))
+        if (np&gt;<span class="dv">0</span>) tmp &lt;-<span class="st"> </span><span class="kw">bind_rows</span>(tmp,samp$ep %&gt;%<span class="st"> </span><span class="kw">as_tibble</span>() %&gt;%
+<span class="st">                                       </span><span class="kw">gather</span>(<span class="dt">factor_key=</span><span class="ot">TRUE</span>) %&gt;%<span class="st"> </span><span class="kw">add_column</span>(<span class="dt">type=</span><span class="st">"0"</span>))
+        if (nf&gt;<span class="dv">0</span>) tmp &lt;-<span class="st"> </span><span class="kw">bind_rows</span>(tmp,samp$ef %&gt;%<span class="st"> </span><span class="kw">as_tibble</span>() %&gt;%
+<span class="st">                                       </span><span class="kw">gather</span>(<span class="dt">factor_key=</span><span class="ot">TRUE</span>) %&gt;%<span class="st"> </span><span class="kw">add_column</span>(<span class="dt">type=</span><span class="st">"1"</span>))
+        if (nn&gt;<span class="dv">0</span>) tmp &lt;-<span class="st"> </span><span class="kw">bind_rows</span>(tmp,samp$en %&gt;%<span class="st"> </span><span class="kw">as_tibble</span>() %&gt;%
+<span class="st">                                       </span><span class="kw">gather</span>(<span class="dt">factor_key=</span><span class="ot">TRUE</span>) %&gt;%<span class="st"> </span><span class="kw">add_column</span>(<span class="dt">type=</span><span class="st">"2"</span>))
         this_colors &lt;-<span class="st"> </span>colors[<span class="kw">c</span>(np&gt;<span class="dv">0</span>,nf&gt;<span class="dv">0</span>,nn&gt;<span class="dv">0</span>)]
         plotsPB[[j]] &lt;-<span class="st"> </span><span class="kw">ggplot</span>() +
-<span class="st">            </span><span class="kw">geom_density</span>(<span class="dt">data=</span>tmp, <span class="kw">aes</span>(<span class="dt">x=</span>value, <span class="dt">y=</span>..count.., <span class="dt">group=</span>type, <span class="dt">color=</span>type, <span class="dt">fill=</span>type), <span class="dt">alpha=</span><span class="fl">0.5</span>, <span class="dt">bw=</span><span class="fl">0.03</span>) +
+<span class="st">            </span><span class="kw">geom_density</span>(<span class="dt">data=</span>tmp, <span class="kw">aes</span>(<span class="dt">x=</span>value, <span class="dt">y=</span>..count.., <span class="dt">group=</span>type, <span class="dt">color=</span>type,
+                                       <span class="dt">fill=</span>type), <span class="dt">alpha=</span><span class="fl">0.5</span>, <span class="dt">bw=</span><span class="fl">0.03</span>) +
 <span class="st">            </span><span class="kw">theme_bw</span>() +<span class="st"> </span><span class="kw">xlab</span>(<span class="kw"><a href="http://www.rdocumentation.org/packages/latex2exp/topics/TeX">TeX</a></span>(<span class="kw">sprintf</span>(<span class="st">"$</span><span class="ch">\\</span><span class="st">beta = %d$"</span>, beta))) +
 <span class="st">            </span><span class="kw">theme</span>(<span class="dt">axis.title.y=</span><span class="kw">element_blank</span>(),
                   <span class="dt">axis.text.y=</span><span class="kw">element_blank</span>(), <span class="dt">axis.ticks.y=</span><span class="kw">element_blank</span>(),
                   <span class="dt">panel.border =</span> <span class="kw">element_blank</span>(), <span class="dt">panel.grid.major =</span> <span class="kw">element_blank</span>(),
-                  <span class="dt">panel.grid.minor =</span> <span class="kw">element_blank</span>(), <span class="dt">axis.line =</span> <span class="kw">element_line</span>(<span class="dt">colour =</span> <span class="st">"black"</span>)) +
+                  <span class="dt">panel.grid.minor =</span> <span class="kw">element_blank</span>(),
+                  <span class="dt">axis.line =</span> <span class="kw">element_line</span>(<span class="dt">colour =</span> <span class="st">"black"</span>)) +
 <span class="st">            </span><span class="kw">coord_cartesian</span>(<span class="dt">ylim =</span> <span class="kw">c</span>(<span class="dv">0</span>, ymax[i]/<span class="kw">sqrt</span>(beta)*num_samp*n)) +
 <span class="st">            </span><span class="kw">theme</span>(<span class="dt">legend.position=</span><span class="st">"none"</span>) +
 <span class="st">            </span><span class="kw">scale_fill_manual</span>(<span class="dt">values=</span>this_colors) +<span class="st"> </span><span class="kw">scale_color_manual</span>(<span class="dt">values=</span>this_colors)
     }
-    plotFileName &lt;-<span class="kw">str_c</span>(<span class="st">"curv-meas_figures/"</span>,
-                         <span class="st">"nn_nf_np="</span>,nn,<span class="st">"_"</span>,nf,<span class="st">"_"</span>,np,<span class="st">".png"</span>)
+    plotFileName &lt;-<span class="kw">str_c</span>(<span class="st">"nn_nf_np="</span>,nn,<span class="st">"_"</span>,nf,<span class="st">"_"</span>,np,<span class="st">".png"</span>)
     <span class="kw">ggsave</span>(plotFileName, <span class="dt">plot=</span><span class="kw"><a href="http://www.rdocumentation.org/packages/Rmisc/topics/multiplot">multiplot</a></span>(<span class="dt">plotlist =</span> plotsPB, <span class="dt">cols =</span> <span class="dv">3</span>), <span class="dt">device=</span><span class="st">"png"</span>,
            <span class="dt">width=</span><span class="dv">178</span>, <span class="dt">height=</span><span class="dv">80</span>, <span class="dt">units=</span><span class="st">"mm"</span>, <span class="dt">dpi=</span><span class="dv">300</span>)
 }</code></pre></div>
-<p><strong>Reconstructing index normalized curvature measures:</strong></p>
-<p><strong>Reconstructing dimension normalized curvature measures:</strong></p>
-<p><strong>Plots of empirical distribution of index constrained eigenvalues:</strong></p>
+<p><strong>Plots of empirical distribution of free eigenvalues including limit distribution:</strong> The following lines produce the plots of the empirical distribution of unconstrained eigenvalues sampled above including its limiting semicircle distribution.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">t &lt;-<span class="st"> </span><span class="kw">seq</span>(-pi/<span class="dv">2</span>,pi/<span class="dv">2</span>,<span class="dt">length=</span><span class="fl">1e3</span>)
+C &lt;-<span class="st"> </span><span class="kw">tibble</span>(<span class="dt">x=</span><span class="kw">sqrt</span>(<span class="dv">2</span>)*<span class="kw">sin</span>(t),<span class="dt">y=</span><span class="kw">sqrt</span>(<span class="dv">2</span>)/pi*<span class="kw">cos</span>(t))
+for (i in <span class="kw">c</span>(<span class="dv">9</span>,<span class="dv">10</span>)) {
+    n &lt;-<span class="st"> </span>format[[i,<span class="dv">2</span>]]
+    plotsPB &lt;-<span class="st"> </span><span class="kw">list</span>()
+    j &lt;-<span class="st"> </span><span class="dv">0</span>
+    for (beta in <span class="kw">c</span>(<span class="dv">1</span>,<span class="dv">2</span>,<span class="dv">4</span>)) {
+        j &lt;-<span class="st"> </span>j<span class="dv">+1</span>
+        fname_evals &lt;-<span class="st"> </span><span class="kw">str_c</span>(<span class="st">"beta_nn_nf_np="</span>,beta,<span class="st">"_0_"</span>,n,<span class="st">"_0_wmup="</span>,warmup,<span class="st">".RData"</span>)
+        <span class="kw">load</span>(<span class="dt">file=</span>fname_evals)
+        tmp &lt;-<span class="st"> </span>(<span class="dv">1</span>/<span class="kw">sqrt</span>(beta*n)*samp$ef) %&gt;%<span class="st"> </span><span class="kw">as_tibble</span>() %&gt;%
+<span class="st">                </span><span class="kw">gather</span>(<span class="dt">factor_key=</span><span class="ot">TRUE</span>) %&gt;%<span class="st"> </span><span class="kw">add_column</span>(<span class="dt">type=</span><span class="st">"1"</span>)
+        plotsPB[[j]] &lt;-<span class="st"> </span><span class="kw">ggplot</span>() +
+<span class="st">            </span><span class="kw">geom_density</span>(<span class="dt">data=</span>tmp, <span class="kw">aes</span>(<span class="dt">x=</span>value, <span class="dt">group=</span>type, <span class="dt">color=</span>type, <span class="dt">fill=</span>type),
+                         <span class="dt">alpha=</span><span class="fl">0.5</span>, <span class="dt">bw=</span><span class="fl">0.03</span>) +
+<span class="st">            </span><span class="kw">theme_bw</span>() +<span class="st"> </span><span class="kw">xlab</span>(<span class="kw"><a href="http://www.rdocumentation.org/packages/latex2exp/topics/TeX">TeX</a></span>(<span class="kw">sprintf</span>(<span class="st">"$</span><span class="ch">\\</span><span class="st">beta = %d$"</span>, beta))) +
+<span class="st">            </span><span class="kw">theme</span>(<span class="dt">axis.title.y=</span><span class="kw">element_blank</span>(),
+                  <span class="dt">axis.text.y=</span><span class="kw">element_blank</span>(), <span class="dt">axis.ticks.y=</span><span class="kw">element_blank</span>(),
+                  <span class="dt">panel.border =</span> <span class="kw">element_blank</span>(), <span class="dt">panel.grid.major =</span> <span class="kw">element_blank</span>(),
+                  <span class="dt">panel.grid.minor =</span> <span class="kw">element_blank</span>(),
+                  <span class="dt">axis.line =</span> <span class="kw">element_line</span>(<span class="dt">colour =</span> <span class="st">"black"</span>)) +
+<span class="st">            </span><span class="kw">coord_cartesian</span>(<span class="dt">ylim =</span> <span class="kw">c</span>(<span class="dv">0</span>, <span class="fl">1.2</span>*<span class="kw">sqrt</span>(<span class="dv">2</span>)/pi)) +
+<span class="st">            </span><span class="kw">theme</span>(<span class="dt">legend.position=</span><span class="st">"none"</span>) +<span class="st"> </span><span class="kw">scale_color_manual</span>(<span class="dt">values=</span>colors[<span class="dv">2</span>]) +
+<span class="st">            </span><span class="kw">scale_fill_manual</span>(<span class="dt">values=</span>colors[<span class="dv">2</span>]) +
+<span class="st">            </span><span class="kw">geom_line</span>(<span class="dt">data=</span>C, <span class="kw">aes</span>(<span class="dt">x=</span>x,<span class="dt">y=</span>y), <span class="dt">color=</span><span class="st">"red"</span>,<span class="dt">size=</span><span class="dv">2</span>,<span class="dt">alpha=</span><span class="fl">0.3</span>)
+    }
+    plotFileName &lt;-<span class="kw">str_c</span>(<span class="st">"semic_n="</span>,n,<span class="st">".png"</span>)
+    <span class="kw">ggsave</span>(plotFileName, <span class="dt">plot=</span><span class="kw"><a href="http://www.rdocumentation.org/packages/Rmisc/topics/multiplot">multiplot</a></span>(<span class="dt">plotlist =</span> plotsPB, <span class="dt">cols =</span> <span class="dv">3</span>), <span class="dt">device=</span><span class="st">"png"</span>,
+           <span class="dt">width=</span><span class="dv">178</span>, <span class="dt">height=</span><span class="dv">80</span>, <span class="dt">units=</span><span class="st">"mm"</span>, <span class="dt">dpi=</span><span class="dv">300</span>)
+}</code></pre></div>
+<p><strong>Plots of empirical distribution of index constrained eigenvalues including limit distribution:</strong> The following lines produce the plots of the empirical distribution of the index constrained eigenvalues sampled above.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">c_a &lt;-<span class="st"> </span>function(a) {
+    integrand &lt;-<span class="st"> </span>function(x) <span class="kw">return</span>(<span class="kw">sqrt</span>((<span class="dv">1</span>-x)/x*(x^<span class="dv">2</span>+x+(a<span class="dv">-1</span>)/a^<span class="dv">2</span>)))
+    <span class="kw">return</span>(<span class="dv">2</span>/pi/(<span class="dv">1</span>-(a<span class="dv">-1</span>)/a^<span class="dv">2</span>)*<span class="kw">integrate</span>(integrand, <span class="dt">lower=</span><span class="dv">0</span>, <span class="dt">upper=</span><span class="dv">1</span>)$value)
+}
+L_a &lt;-<span class="st"> </span>function(a) <span class="kw">return</span>(a*<span class="kw">sqrt</span>(<span class="dv">2</span>/(a^<span class="dv">2</span>-a<span class="dv">+1</span>)))
+bnd_a &lt;-<span class="st"> </span>function(a) {
+    L &lt;-<span class="st"> </span><span class="kw">L_a</span>(a)
+    <span class="kw">return</span>(<span class="kw">list</span>(<span class="dt">neg_low=</span>-L/a, <span class="dt">neg_upp=</span>-L*(<span class="dv">1-1</span>/a), <span class="dt">pos_low=</span><span class="dv">0</span>, <span class="dt">pos_upp=</span>L))
+}
+rho_a &lt;-<span class="st"> </span>function(a,<span class="dt">moment=</span><span class="dv">0</span>) {
+    L &lt;-<span class="st"> </span><span class="kw">L_a</span>(a)
+    <span class="kw">return</span>( function(x) x^moment/pi*<span class="kw">sqrt</span>( (L-x)/x *<span class="st"> </span>(x+L/a) *<span class="st"> </span>(x+(<span class="dv">1-1</span>/a)*L) ) )
+}
+a &lt;-<span class="st"> </span><span class="kw">seq</span>(<span class="dv">1</span>,<span class="dv">2</span>,<span class="dt">length.out=</span><span class="fl">1e3</span>)
+c &lt;-<span class="st"> </span><span class="kw">sapply</span>(a, c_a)
+
+for (i in <span class="dv">3</span>:<span class="dv">6</span>) {
+    nn &lt;-<span class="st"> </span>format[[i,<span class="dv">1</span>]]
+    np &lt;-<span class="st"> </span>format[[i,<span class="dv">3</span>]]
+    n &lt;-<span class="st"> </span>nn+np
+    c0 &lt;-<span class="st"> </span>np/n
+    ind &lt;-<span class="st"> </span><span class="kw">which.min</span>((c-c0)^<span class="dv">2</span>)
+    a0 &lt;-<span class="st"> </span>a[ind]
+    bnd &lt;-<span class="st"> </span><span class="kw">bnd_a</span>(a0)
+    x_neg &lt;-<span class="st"> </span><span class="kw">seq</span>(bnd$neg_low,bnd$neg_upp,<span class="dt">length.out=</span><span class="fl">1e3</span>)
+    x_pos &lt;-<span class="st"> </span><span class="kw">seq</span>(bnd$pos_low,bnd$pos_upp,<span class="dt">length.out=</span><span class="fl">1e3</span>)
+    data_lim_neg &lt;-<span class="st"> </span><span class="kw">tibble</span>(<span class="dt">x=</span>x_neg, <span class="dt">y=</span><span class="kw">sapply</span>(x_neg, <span class="kw">rho_a</span>(a0))*n*num_samp)
+    data_lim_pos &lt;-<span class="st"> </span><span class="kw">tibble</span>(<span class="dt">x=</span>x_pos, <span class="dt">y=</span><span class="kw">sapply</span>(x_pos, <span class="kw">rho_a</span>(a0))*n*num_samp)
+    plotsPB &lt;-<span class="st"> </span><span class="kw">list</span>()
+    j &lt;-<span class="st"> </span><span class="dv">0</span>
+    for (beta in <span class="kw">c</span>(<span class="dv">1</span>,<span class="dv">2</span>,<span class="dv">4</span>)) {
+        j &lt;-<span class="st"> </span>j<span class="dv">+1</span>
+        <span class="kw">load</span>(<span class="dt">file=</span><span class="kw">str_c</span>(<span class="st">"dbeta_nn_nf_np="</span>,beta,<span class="st">"_"</span>,nn,<span class="st">"_0_"</span>,np,<span class="st">"_wmup="</span>,warmup,<span class="st">".RData"</span>))
+        data_pos &lt;-<span class="st"> </span>(<span class="dv">1</span>/<span class="kw">sqrt</span>(beta*n)*samp$ep) %&gt;%<span class="st"> </span><span class="kw">as_tibble</span>() %&gt;%<span class="st"> </span><span class="kw">gather</span>()
+        data_neg &lt;-<span class="st"> </span>(<span class="dv">1</span>/<span class="kw">sqrt</span>(beta*n)*samp$en) %&gt;%<span class="st"> </span><span class="kw">as_tibble</span>() %&gt;%<span class="st"> </span><span class="kw">gather</span>()
+        plotsPB[[j]] &lt;-<span class="st"> </span><span class="kw">ggplot</span>() +
+<span class="st">            </span><span class="kw">geom_density</span>(<span class="dt">data=</span>data_pos, <span class="kw">aes</span>(<span class="dt">x=</span>value, <span class="dt">y=</span>..count..), <span class="dt">color=</span>colors[<span class="dv">1</span>],
+                         <span class="dt">fill=</span>colors[<span class="dv">1</span>], <span class="dt">alpha=</span><span class="fl">0.5</span>, <span class="dt">bw=</span><span class="fl">0.01</span>) +
+<span class="st">            </span><span class="kw">geom_density</span>(<span class="dt">data=</span>data_neg, <span class="kw">aes</span>(<span class="dt">x=</span>value, <span class="dt">y=</span>..count..), <span class="dt">color=</span>colors[<span class="dv">3</span>],
+                         <span class="dt">fill=</span>colors[<span class="dv">3</span>], <span class="dt">alpha=</span><span class="fl">0.5</span>, <span class="dt">bw=</span><span class="fl">0.01</span>) +
+<span class="st">            </span><span class="kw">geom_line</span>(<span class="dt">data=</span>data_lim_neg, <span class="kw">aes</span>(<span class="dt">x=</span>x,<span class="dt">y=</span>y),<span class="dt">color=</span>colors[<span class="dv">2</span>],<span class="dt">size=</span><span class="dv">1</span>,<span class="dt">alpha=</span><span class="fl">0.7</span>) +
+<span class="st">            </span><span class="kw">geom_line</span>(<span class="dt">data=</span>data_lim_pos, <span class="kw">aes</span>(<span class="dt">x=</span>x,<span class="dt">y=</span>y),<span class="dt">color=</span>colors[<span class="dv">2</span>],<span class="dt">size=</span><span class="dv">1</span>,<span class="dt">alpha=</span><span class="fl">0.7</span>) +
+<span class="st">            </span><span class="kw">theme_bw</span>() +<span class="st"> </span><span class="kw">xlab</span>(<span class="kw"><a href="http://www.rdocumentation.org/packages/latex2exp/topics/TeX">TeX</a></span>(<span class="kw">sprintf</span>(<span class="st">"$</span><span class="ch">\\</span><span class="st">beta = %d$"</span>, beta))) +
+<span class="st">            </span><span class="kw">theme</span>(<span class="dt">axis.title.y=</span><span class="kw">element_blank</span>(),
+                  <span class="dt">axis.text.y=</span><span class="kw">element_blank</span>(), <span class="dt">axis.ticks.y=</span><span class="kw">element_blank</span>(),
+                  <span class="dt">panel.border =</span> <span class="kw">element_blank</span>(), <span class="dt">panel.grid.major =</span> <span class="kw">element_blank</span>(),
+                  <span class="dt">panel.grid.minor =</span> <span class="kw">element_blank</span>(),
+                  <span class="dt">axis.line =</span> <span class="kw">element_line</span>(<span class="dt">colour =</span> <span class="st">"black"</span>)) +
+<span class="st">            </span><span class="kw">coord_cartesian</span>(<span class="dt">ylim =</span> <span class="kw">c</span>(<span class="dv">0</span>, ymax[i]*n*num_samp)) +
+<span class="st">            </span><span class="kw">theme</span>(<span class="dt">legend.position=</span><span class="st">"none"</span>)
+    }
+    plotFileName &lt;-<span class="kw">str_c</span>(<span class="st">"indlim_n_cPerc="</span>,n,<span class="st">"_"</span>,<span class="kw">round</span>(c0*<span class="dv">100</span>),<span class="st">".png"</span>)
+    <span class="kw">ggsave</span>(plotFileName, <span class="dt">plot=</span><span class="kw"><a href="http://www.rdocumentation.org/packages/Rmisc/topics/multiplot">multiplot</a></span>(<span class="dt">plotlist =</span> plotsPB, <span class="dt">cols =</span> <span class="dv">3</span>), <span class="dt">device=</span><span class="st">"png"</span>,
+           <span class="dt">width=</span><span class="dv">178</span>, <span class="dt">height=</span><span class="dv">80</span>, <span class="dt">units=</span><span class="st">"mm"</span>, <span class="dt">dpi=</span><span class="dv">300</span>)
+}</code></pre></div>
+<p><strong>Reconstructing index normalized curvature measures:</strong> We find the limit curves of the dimension normalized curvature measures for different values of the constant <span class="math inline">\(C\)</span>.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">L &lt;-<span class="st"> </span><span class="kw"><a href="../reference/leigh.html">leigh</a></span>(<span class="fl">1e5</span>)
+R &lt;-<span class="st"> </span><span class="kw"><a href="../reference/rate.html">rate</a></span>(<span class="fl">1e5</span>)
+Nk &lt;-<span class="st"> </span><span class="fl">1e4</span>
+kappa &lt;-<span class="st"> </span>(<span class="dv">0</span>:Nk)/Nk
+Nr &lt;-<span class="st"> </span><span class="fl">1e4</span>
+rho &lt;-<span class="st"> </span>(<span class="dv">0</span>:Nr)/Nr
+Lkappa &lt;-<span class="st"> </span>L$<span class="kw">lkup_kappa</span>(rho)
+Rkappa &lt;-<span class="st"> </span>R$<span class="kw">lkup_R</span>(rho)
+
+C_L &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="fl">0.15</span>,<span class="fl">0.18</span>,<span class="fl">0.2</span>,<span class="fl">0.22</span>,<span class="fl">0.25</span>)
+hues =<span class="st"> </span><span class="kw">seq</span>(<span class="dv">15</span>, <span class="dv">375</span>, <span class="dt">length =</span> <span class="kw">length</span>(C_L) +<span class="st"> </span><span class="dv">1</span>)
+mycolors &lt;-<span class="st"> </span><span class="kw">hcl</span>(<span class="dt">h =</span> hues, <span class="dt">l =</span> <span class="dv">65</span>, <span class="dt">c =</span> <span class="dv">100</span>)[<span class="dv">1</span>:<span class="kw">length</span>(C_L)]
+data_rhomin &lt;-<span class="st"> </span><span class="kw">tibble</span>()
+for (C in C_L) {
+    rhomin &lt;-<span class="st"> </span><span class="kw">sapply</span>(kappa, function(x)
+        <span class="kw">return</span>( <span class="kw">max</span>(<span class="dv">1</span>-<span class="kw">sqrt</span>(<span class="dv">1</span>-x), <span class="kw">min</span>(<span class="kw">sqrt</span>(x),rho[<span class="kw">which.min</span>(
+            (x-Lkappa)^<span class="dv">2</span> /<span class="st"> </span>(<span class="dv">1</span>-<span class="kw">abs</span>(<span class="dv">2</span>*rho<span class="dv">-1</span>)) +<span class="st"> </span><span class="dv">4</span>*C*Rkappa )] ) ) ) )
+    data_rhomin &lt;-<span class="st"> </span><span class="kw">bind_rows</span>(data_rhomin,
+                             <span class="kw">tibble</span>(<span class="dt">kappa=</span>kappa,
+                                    <span class="dt">rho=</span>rhomin,
+                                    <span class="dt">C=</span><span class="kw">as.factor</span>(C)))
+}
+y_pat &lt;-<span class="st"> </span><span class="kw">seq</span>(<span class="dv">0</span>,<span class="dv">1</span>,<span class="dt">length.out=</span><span class="fl">1e2</span>)
+pat_bd_low &lt;-<span class="st"> </span><span class="kw">tibble</span>(<span class="dt">patX=</span>y_pat^<span class="dv">2</span>, <span class="dt">patY=</span>y_pat)
+pat_bd_upp &lt;-<span class="st"> </span><span class="kw">tibble</span>(<span class="dt">patX=</span><span class="dv">1</span>-y_pat^<span class="dv">2</span>, <span class="dt">patY=</span><span class="dv">1</span>-y_pat)
+P &lt;-<span class="st"> </span><span class="kw">ggplot</span>() +<span class="st"> </span><span class="kw">theme_bw</span>() +
+<span class="st">    </span><span class="kw">geom_line</span>(<span class="dt">data=</span>pat_bd_low, <span class="kw">aes</span>(patY, patX), <span class="dt">linetype=</span><span class="dv">2</span>, <span class="dt">alpha=</span><span class="fl">0.5</span>) +
+<span class="st">    </span><span class="kw">geom_line</span>(<span class="dt">data=</span>pat_bd_upp, <span class="kw">aes</span>(patY, patX), <span class="dt">linetype=</span><span class="dv">2</span>, <span class="dt">alpha=</span><span class="fl">0.5</span>) +
+<span class="st">    </span><span class="kw">geom_line</span>(<span class="dt">data=</span>data_rhomin, <span class="kw">aes</span>(<span class="dt">x=</span>rho,<span class="dt">y=</span>kappa,<span class="dt">group=</span>C,<span class="dt">color=</span>C)) +
+<span class="st">    </span><span class="kw">scale_colour_manual</span>(<span class="dt">values=</span>mycolors) +
+<span class="st">    </span><span class="kw">xlab</span>(<span class="kw"><a href="http://www.rdocumentation.org/packages/latex2exp/topics/TeX">TeX</a></span>(<span class="kw">sprintf</span>(<span class="st">"$</span><span class="ch">\\</span><span class="st">rho$"</span>))) +<span class="st"> </span><span class="kw">ylab</span>(<span class="kw"><a href="http://www.rdocumentation.org/packages/latex2exp/topics/TeX">TeX</a></span>(<span class="kw">sprintf</span>(<span class="st">"$</span><span class="ch">\\</span><span class="st">kappa$"</span>)))
+<span class="kw">ggsave</span>(<span class="st">"lim_PhiDim.png"</span>, <span class="dt">plot=</span>P, <span class="dt">device=</span><span class="st">"png"</span>,
+       <span class="dt">width=</span><span class="dv">178</span>, <span class="dt">height=</span><span class="dv">120</span>, <span class="dt">units=</span><span class="st">"mm"</span>, <span class="dt">dpi=</span><span class="dv">300</span>)</code></pre></div>
 </div>
   </div>
 

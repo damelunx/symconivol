@@ -34,6 +34,7 @@
 #' Package: \code{\link[symconivol]{symconivol}}
 #' 
 #' @examples
+#' \dontrun{
 #' library(tidyverse)
 #' library(rstan)
 #' 
@@ -51,6 +52,7 @@
 #' ggplot() +
 #'     geom_density(data=tib, aes(x=value, y=..count.., group=type, color=type, fill=type), alpha=0.5, bw=0.03) + theme_bw() +
 #'     theme(axis.title.y=element_blank(), axis.text.y=element_blank(), axis.ticks.y=element_blank(), legend.position="none")
+#' }
 #' 
 #' @export
 #'

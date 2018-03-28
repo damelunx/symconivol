@@ -4,7 +4,7 @@
 \name{symconivol}
 \alias{symconivol}
 \alias{symconivol-package}
-\title{symconivol: A package for curvature measures of symmetric cones}
+\title{symconivol}
 \description{
 The symconivol package provides functions for analyzing intrinsic volumes and
 curvature measures of symmetric cones, as well as
@@ -36,6 +36,15 @@ See the accompanying vignette for more information on how to use these functions
   \item \code{\link[symconivol]{leigh}}: produces a table and lookup functions
         for Leigh's curve (see vignette for definition)
   
+  \item \code{\link[symconivol]{rate}}: produces a table and lookup function
+        for the large deviation rate function of the index
+        (see accompanying vignette for definition)
+  
+  \item \code{\link[symconivol]{mu}}: returns a pre-computed table and lookup
+        functions for the estimated limit curve for dimension normalized
+        curvature measures (see accompanying vignette for definition;
+        we use \code{C=0.2}).
+  
   \item \code{\link[symconivol]{constr_eigval}}: generates inputs for Stan
         (model string or external file) for sampling from the Gaussian
         orthogonal/unitary/symplectic ensemble conditioned on the index,
@@ -53,12 +62,29 @@ See the accompanying vignette for more information on how to use these functions
         estimate the (normalized) curvature measures from a sample of the
         bivariate chi-bar-squared distribution
   
-  \item \code{\link[symconivol]{indnorm_to_unnorm}}: estimates the unnormalized
-        curvature measures from estimates of the dimension normalized ones and
-        further estimates (see vignette for details)
-  
   \item \code{\link[symconivol]{alg_deg}}: looks up the algebraic degree of
         semidefinite programming from a table
+}
+}
+
+\section{Data}{
+
+\itemize{
+  \item \code{\link[symconivol]{ind_prob}}: A list of sample counts of a
+        Bernoulli variable with (unnormalized) success and failure
+        probabilities given by Prob\{ind=r\} and Prob\{ind=r+1\}.
+  
+  \item \code{\link[symconivol]{phi_ind}}: A list of reconstructed values
+        of index constrained curvature measures; the constraints being
+        of the form r<=ind(x)<=r+s.
+  
+  \item \code{\link[symconivol]{mu_data}}: A table of function values of
+        the estimated limit curve of dimension normalized curvature measures mu.
+  
+  \item \code{\link[symconivol]{alg_deg_data}}: A list of the values of the
+        algebraic degree of semidefinite programming delta(m,n,r) for
+        \code{n=2,3,...,14}. The values are given as strings to avoid
+        rounding errors.
 }
 }
 

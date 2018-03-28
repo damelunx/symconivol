@@ -67,7 +67,7 @@
   </a>
 </li>
 <li>
-  <a href="../articles/symconivol.html">Introduction</a>
+  <a href="../reference/symconivol.html">Overview</a>
 </li>
 <li class="dropdown">
   <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
@@ -91,7 +91,7 @@
   <a href="../reference/index.html">
     <span class="fa fa-file-code-o"></span>
      
-    functions
+    functions &amp; data
   </a>
 </li>
 <li>
@@ -133,16 +133,20 @@
     
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>The output of <code>leigh</code> is a list of three elements:</p><ul>
-<li><p><code>tab</code>: a table of function values with <code>N</code> elements</p></li>
+    <p>The output of <code>leigh</code> is a list of six elements:</p><ul>
+<li><p><code>table</code>: a table of function values with <code>N</code> elements</p></li>
+<li><p><code>dtable</code>: a table of function values with <code>N</code> elements for the derivative</p></li>
 <li><p><code>lkup_rho</code>: a corresponding lookup function for rho in terms of kappa</p></li>
 <li><p><code>lkup_kappa</code>: a corresponding lookup function for kappa in terms of rho</p></li>
+<li><p><code>lkup_drho_dkappa</code>: a corresponding lookup function for the partial derivative of rho in terms of kappa</p></li>
+<li><p><code>lkup_dkappa_drho</code>: a corresponding lookup function for the partial derivative of kappa in terms of rho</p></li>
 </ul>
 
     
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
-    <p><code><a href='pat_bnd.html'>pat_bnd</a></code></p>
+    <p><code><a href='mu.html'>mu</a></code>, <code><a href='rate.html'>rate</a></code>, 
+<code><a href='pat_bnd.html'>pat_bnd</a></code></p>
 <p>Package: <code><a href='symconivol.html'>symconivol</a></code></p>
     
 

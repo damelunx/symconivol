@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>symconivol: A package for curvature measures of symmetric cones — symconivol • symconivol</title>
+<title>symconivol — symconivol • symconivol</title>
 
 <!-- jquery -->
 <script src="https://code.jquery.com/jquery-3.1.0.min.js" integrity="sha384-nrOSfDHtoPMzJHjVTdCopGqIqeYETSXhZDFyniQ8ZHcVy08QesyHcnOUpMpqnmWq" crossorigin="anonymous"></script>
@@ -27,7 +27,7 @@
 <script src="../pkgdown.js"></script>
   
   
-<meta property="og:title" content="symconivol: A package for curvature measures of symmetric cones — symconivol" />
+<meta property="og:title" content="symconivol — symconivol" />
 
 <meta property="og:description" content="The symconivol package provides functions for analyzing intrinsic volumes and
 curvature measures of symmetric cones, as well as
@@ -69,7 +69,7 @@ function." />
   </a>
 </li>
 <li>
-  <a href="../articles/symconivol.html">Introduction</a>
+  <a href="../reference/symconivol.html">Overview</a>
 </li>
 <li class="dropdown">
   <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
@@ -93,7 +93,7 @@ function." />
   <a href="../reference/index.html">
     <span class="fa fa-file-code-o"></span>
      
-    functions
+    functions &amp; data
   </a>
 </li>
 <li>
@@ -114,7 +114,7 @@ function." />
       <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>symconivol: A package for curvature measures of symmetric cones</h1>
+    <h1>symconivol</h1>
     </div>
 
     
@@ -149,6 +149,13 @@ See the accompanying vignette for more information on how to use these functions
         for given <code>beta</code> and <code>n</code></p></li>
 <li><p><code><a href='leigh.html'>leigh</a></code>: produces a table and lookup functions
         for Leigh's curve (see vignette for definition)</p></li>
+<li><p><code><a href='rate.html'>rate</a></code>: produces a table and lookup function
+        for the large deviation rate function of the index
+        (see accompanying vignette for definition)</p></li>
+<li><p><code><a href='mu.html'>mu</a></code>: returns a pre-computed table and lookup
+        functions for the estimated limit curve for dimension normalized
+        curvature measures (see accompanying vignette for definition;
+        we use <code>C=0.2</code>).</p></li>
 <li><p><code><a href='constr_eigval.html'>constr_eigval</a></code>: generates inputs for Stan
         (model string or external file) for sampling from the Gaussian
         orthogonal/unitary/symplectic ensemble conditioned on the index,
@@ -162,11 +169,26 @@ See the accompanying vignette for more information on how to use these functions
 <li><p><code><a href='estim_em_cm.html'>estim_em_cm</a></code>: produces EM-type iterates to
         estimate the (normalized) curvature measures from a sample of the
         bivariate chi-bar-squared distribution</p></li>
-<li><p><code><a href='indnorm_to_unnorm.html'>indnorm_to_unnorm</a></code>: estimates the unnormalized
-        curvature measures from estimates of the dimension normalized ones and
-        further estimates (see vignette for details)</p></li>
 <li><p><code><a href='alg_deg.html'>alg_deg</a></code>: looks up the algebraic degree of
         semidefinite programming from a table</p></li>
+</ul>
+    
+    <h2 class="hasAnchor" id="data"><a class="anchor" href="#data"></a>Data</h2>
+
+    
+    <ul>
+<li><p><code><a href='ind_prob.html'>ind_prob</a></code>: A list of sample counts of a
+        Bernoulli variable with (unnormalized) success and failure
+        probabilities given by Prob{ind=r} and Prob{ind=r+1}.</p></li>
+<li><p><code><a href='phi_ind.html'>phi_ind</a></code>: A list of reconstructed values
+        of index constrained curvature measures; the constraints being
+        of the form r&lt;=ind(x)&lt;=r+s.</p></li>
+<li><p><code><a href='mu_data.html'>mu_data</a></code>: A table of function values of
+        the estimated limit curve of dimension normalized curvature measures mu.</p></li>
+<li><p><code><a href='alg_deg_data.html'>alg_deg_data</a></code>: A list of the values of the
+        algebraic degree of semidefinite programming delta(m,n,r) for
+        <code>n=2,3,...,14</code>. The values are given as strings to avoid
+        rounding errors.</p></li>
 </ul>
     
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
@@ -175,13 +197,13 @@ See the accompanying vignette for more information on how to use these functions
     <dl class='dl-horizontal'>
   <dt>manual</dt><dd><p><a href='https://damelunx.github.io/symconivol/'>damelunx.github.io/symconivol</a></p></dd>
   <dt>sources</dt><dd><p><a href='https://github.com/damelunx/symconivol'>github.com/damelunx/symconivol</a></p></dd>
-  <dt>vignette</dt><dd><p><a href='../doc/curv_meas.html'>Studying curvature measures of symmetric cones</a>:
+  <dt>vignette</dt><dd><p><a href='https://damelunx.github.io/symconivol/articles/curv_meas.html'>Studying curvature measures of symmetric cones</a>:
         introduces curvature measures of symmetric cones, their relation to
         the Gaussian orthogonal/unitary/symplectic ensemble conditioned on
         the index function, explains the algorithms involved for estimating
         the curvature measures, gives some background and estimates involving
         limiting distributions and the algebraic degree of semidefinite programming</p></dd>
-  <dt>vignette</dt><dd><p><a href='../doc/curv_meas_tech.html'>Studying curvature measures of symmetric cones - Technical details</a>:
+  <dt>vignette</dt><dd><p><a href='https://damelunx.github.io/symconivol/articles/curv_meas_tech.html'>Studying curvature measures of symmetric cones - Technical details</a>:
         a technical note to accompany the other vignette to give the commands
         for producing some figures in the main vignette, which are
          not computed on the fly</p></dd>
@@ -196,6 +218,8 @@ See the accompanying vignette for more information on how to use these functions
       <li><a href="#details">Details</a></li>
 
       <li><a href="#functions">Functions</a></li>
+
+      <li><a href="#data">Data</a></li>
 
       <li><a href="#see-also">See also</a></li>
           </ul>

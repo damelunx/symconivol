@@ -67,7 +67,7 @@ programmin (see the accompanying vignette for reference to literature)." />
   </a>
 </li>
 <li>
-  <a href="../articles/symconivol.html">Introduction</a>
+  <a href="../reference/symconivol.html">Overview</a>
 </li>
 <li class="dropdown">
   <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
@@ -91,7 +91,7 @@ programmin (see the accompanying vignette for reference to literature)." />
   <a href="../reference/index.html">
     <span class="fa fa-file-code-o"></span>
      
-    functions
+    functions &amp; data
   </a>
 </li>
 <li>
@@ -134,10 +134,16 @@ programmin (see the accompanying vignette for reference to literature).</p>
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
     <p>The output of <code>alg_deg</code> is a table of the algebraic degrees
-        for the given value of <code>n</code>. To avoid loss of loss of precision,
+        for the given value of <code>n</code>. To avoid loss of precision,
         the algebraic degrees are given as strings. See the below example for
         a simple conversion to numeric, including the problems associated with
         that step.</p>
+    
+    <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
+
+    <p>Only some precomputed values of <code>n</code> are available. See the literature
+referenced in the accompanying vignette for general (combinatorial) formulas
+for the algebraic degree.</p>
     
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
@@ -146,13 +152,13 @@ programmin (see the accompanying vignette for reference to literature).</p>
     
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='no'>AD_str</span> <span class='kw'>&lt;-</span> <span class='fu'>alg_deg</span>(<span class='fl'>6</span>)</div><div class='output co'>#&gt; <span class='error'>Error in str_c("data/alg_deg/n=", n, ".txt"): could not find function "str_c"</span></div><div class='input'>
+    <pre class="examples"><div class='input'><span class='no'>AD_str</span> <span class='kw'>&lt;-</span> <span class='fu'>alg_deg</span>(<span class='fl'>6</span>)</div><div class='output co'>#&gt; <span class='error'>Error in str_c("n=", n): could not find function "str_c"</span></div><div class='input'>
 <span class='co'># convert to integer matrix</span>
 <span class='no'>AD</span> <span class='kw'>&lt;-</span> <span class='fu'>matrix</span>( <span class='fu'>as.numeric</span>(<span class='no'>AD_str</span>), <span class='fu'>dim</span>(<span class='no'>AD_str</span>) )</div><div class='output co'>#&gt; <span class='error'>Error in matrix(as.numeric(AD_str), dim(AD_str)): object 'AD_str' not found</span></div><div class='input'><span class='fu'>colnames</span>(<span class='no'>AD</span>) <span class='kw'>&lt;-</span> <span class='fu'>colnames</span>(<span class='no'>AD_str</span>)</div><div class='output co'>#&gt; <span class='error'>Error in is.data.frame(x): object 'AD_str' not found</span></div><div class='input'><span class='fu'>rownames</span>(<span class='no'>AD</span>) <span class='kw'>&lt;-</span> <span class='fu'>rownames</span>(<span class='no'>AD_str</span>)</div><div class='output co'>#&gt; <span class='error'>Error in rownames(AD_str): object 'AD_str' not found</span></div><div class='input'>
 <span class='co'># compare both matrices</span>
 <span class='fu'>print</span>(<span class='no'>AD_str</span>)</div><div class='output co'>#&gt; <span class='error'>Error in print(AD_str): object 'AD_str' not found</span></div><div class='input'><span class='fu'>print</span>(<span class='no'>AD</span>)</div><div class='output co'>#&gt; <span class='error'>Error in print(AD): object 'AD' not found</span></div><div class='input'>
 <span class='co'># doing the same for larger n</span>
-<span class='no'>AD_str</span> <span class='kw'>&lt;-</span> <span class='fu'>alg_deg</span>(<span class='fl'>14</span>)</div><div class='output co'>#&gt; <span class='error'>Error in str_c("data/alg_deg/n=", n, ".txt"): could not find function "str_c"</span></div><div class='input'><span class='no'>AD</span> <span class='kw'>&lt;-</span> <span class='fu'>matrix</span>( <span class='fu'>as.numeric</span>(<span class='no'>AD_str</span>), <span class='fu'>dim</span>(<span class='no'>AD_str</span>) )</div><div class='output co'>#&gt; <span class='error'>Error in matrix(as.numeric(AD_str), dim(AD_str)): object 'AD_str' not found</span></div><div class='input'>
+<span class='no'>AD_str</span> <span class='kw'>&lt;-</span> <span class='fu'>alg_deg</span>(<span class='fl'>14</span>)</div><div class='output co'>#&gt; <span class='error'>Error in str_c("n=", n): could not find function "str_c"</span></div><div class='input'><span class='no'>AD</span> <span class='kw'>&lt;-</span> <span class='fu'>matrix</span>( <span class='fu'>as.numeric</span>(<span class='no'>AD_str</span>), <span class='fu'>dim</span>(<span class='no'>AD_str</span>) )</div><div class='output co'>#&gt; <span class='error'>Error in matrix(as.numeric(AD_str), dim(AD_str)): object 'AD_str' not found</span></div><div class='input'>
 <span class='co'># the conversion introduces rounding errors</span>
 <span class='no'>i</span> <span class='kw'>&lt;-</span> <span class='fu'>which.max</span>(<span class='no'>AD_str</span>)</div><div class='output co'>#&gt; <span class='error'>Error in which.max(AD_str): object 'AD_str' not found</span></div><div class='input'><span class='fu'>print</span>(<span class='no'>AD_str</span>[<span class='no'>i</span>])</div><div class='output co'>#&gt; <span class='error'>Error in print(AD_str[i]): object 'AD_str' not found</span></div><div class='input'><span class='fu'>print</span>(<span class='no'>AD</span>[<span class='no'>i</span>],<span class='kw'>digits</span><span class='kw'>=</span><span class='fl'>20</span>)</div><div class='output co'>#&gt; <span class='error'>Error in print(AD[i], digits = 20): object 'AD' not found</span></div><div class='input'>
 </div></pre>
@@ -163,6 +169,8 @@ programmin (see the accompanying vignette for reference to literature).</p>
       <li><a href="#arguments">Arguments</a></li>
       
       <li><a href="#value">Value</a></li>
+
+      <li><a href="#details">Details</a></li>
 
       <li><a href="#see-also">See also</a></li>
       

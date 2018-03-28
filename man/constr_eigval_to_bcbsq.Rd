@@ -30,6 +30,7 @@ Package: \code{\link[symconivol]{symconivol}}
 }
 
 \examples{
+\dontrun{
 library(tidyverse)
 library(rstan)
 
@@ -40,5 +41,6 @@ stan_samp <- stan( file = filename, data = M$data,
 file.remove(filename)
 
 m_samp <- constr_eigval_to_bcbsq( rstan::extract(stan_samp) )
+}
 
 }

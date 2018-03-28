@@ -10,20 +10,27 @@ reference:
       - '`curv_meas_exact`'
       - '`pat_bnd`'
       - '`leigh`'
+      - '`rate`'
+      - '`mu`'
       - '`constr_eigval`'
       - '`constr_eigval_to_bcbsq`'
       - '`prepare_em_cm`'
       - '`estim_em_cm`'
-      - '`indnorm_to_unnorm`'
-      - '`leigh`'
       - '`alg_deg`'
+  - title: Data
+    desc: ~
+    contents:
+      - '`ind_prob`'
+      - '`phi_ind`'
+      - '`mu_data`'
+      - '`alg_deg_data`'
 navbar:
   type: inverse
   left:
     - icon: fa-home
       href: index.html
-    - text: "Introduction"
-      href: articles/symconivol.html
+    - text: "Overview"
+      href: reference/symconivol.html
     - text: "Study"
       menu:
         - text: Main
@@ -32,7 +39,7 @@ navbar:
           href: articles/curv_meas_tech.html
   right:
     - icon: fa-file-code-o 
-      text: "functions"
+      text: "functions & data"
       href: reference/index.html
     - icon: fa-github fa-lg
       text: "github"

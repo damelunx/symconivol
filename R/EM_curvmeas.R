@@ -19,6 +19,7 @@
 #' Package: \code{\link[symconivol]{symconivol}}
 #' 
 #' @examples
+#' \dontrun{
 #' library(tidyverse)
 #' library(rstan)
 #' 
@@ -29,6 +30,7 @@
 #' file.remove(filename)
 #' 
 #' m_samp <- constr_eigval_to_bcbsq( rstan::extract(stan_samp) )
+#' }
 #' 
 #' @export
 #'
@@ -226,7 +228,7 @@ estim_em_cm <- function(d, low, upp, m_samp, N=20, no_of_lcc_projections=1, data
     out_iterates[1, ] <- v
 
     # prepare Mosek inputs
-    mos_inp <- .create_mosek_input_em_cm(rep(0,upp-low+1))
+    mos_inp <- symconivol:::.create_mosek_input_em_cm(rep(0,upp-low+1))
     
     # prepare Mosek inputs for log-concavity enforcing
     A_lcc <- matrix(0,upp-low+1,upp-low-1)
@@ -239,12 +241,13 @@ estim_em_cm <- function(d, low, upp, m_samp, N=20, no_of_lcc_projections=1, data
         diag(A_lcc[3:(upp-low+1),]) <- 1
     }
     mos_inp_lcc <- conivol:::.create_mosek_input_polyh_pol(A_lcc, rep(0,upp-low+1), 0)
-    
     for (i in 1:N) {
         denom <- colSums( data * v )
         const <- rowSums( sweep( 1/n * data * v , MARGIN=2, denom, "/") )
-        mos_inp <- .update_mosek_input_em_cm(mos_inp,const)
+        mos_inp <- symconivol:::.update_mosek_input_em_cm(mos_inp,const)
         mos_out <- Rmosek::mosek(mos_inp, opts)
+        if (mos_out$response$code==1001)
+            stop("Mosek license has expired.")
         v <- mos_out$sol$itr$xx
         if (no_of_lcc_projections>0)
             for (i_lcc in (1:no_of_lcc_projections)) {
