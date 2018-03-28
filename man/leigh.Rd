@@ -10,11 +10,14 @@ leigh(N = 1000)
 \item{N}{number of intermediate points; size of resulting table}
 }
 \value{
-The output of \code{leigh} is a list of three elements:
+The output of \code{leigh} is a list of six elements:
         \itemize{
-          \item \code{tab}: a table of function values with \code{N} elements
+          \item \code{table}: a table of function values with \code{N} elements
+          \item \code{dtable}: a table of function values with \code{N} elements for the derivative
           \item \code{lkup_rho}: a corresponding lookup function for rho in terms of kappa
           \item \code{lkup_kappa}: a corresponding lookup function for kappa in terms of rho
+          \item \code{lkup_drho_dkappa}: a corresponding lookup function for the partial derivative of rho in terms of kappa
+          \item \code{lkup_dkappa_drho}: a corresponding lookup function for the partial derivative of kappa in terms of rho
         }
 }
 \description{
@@ -23,6 +26,7 @@ The output of \code{leigh} is a list of three elements:
 }
 \section{See also}{
 
+\code{\link[symconivol]{mu}}, \code{\link[symconivol]{rate}}, 
 \code{\link[symconivol]{pat_bnd}}
 
 Package: \code{\link[symconivol]{symconivol}}

@@ -2,33 +2,58 @@ pandoc: 1.17.2
 pkgdown: 0.1.0.9000
 pkgdown_sha: 17f683717d0a1547f13a08a259b34c58927452d6
 articles:
+  approx-indprobrat-1.pdf: curv-meas_figures/approx-indprobrat-1.pdf
+  approx-indprobrat-1.png: curv-meas_figures/approx-indprobrat-1.png
   est-sdev-indnormcm-1.png: curv-meas_figures/est-sdev-indnormcm-1.png
   est-sdev-intrvol-1.png: curv-meas_figures/est-sdev-intrvol-1.png
+  est-var-PhiInd-1.pdf: curv-meas_figures/est-var-PhiInd-1.pdf
   est-var-indnormcm-1.png: curv-meas_figures/est-var-indnormcm-1.png
   est-var-intrvol-1.png: curv-meas_figures/est-var-intrvol-1.png
+  illustr-dim-norm-cm-1.pdf: curv-meas_figures/illustr-dim-norm-cm-1.pdf
   illustr-dim-norm-cm-1.png: curv-meas_figures/illustr-dim-norm-cm-1.png
   illustr-dim-norm-cm-artif-1.png: curv-meas_figures/illustr-dim-norm-cm-artif-1.png
+  illustr-dim-norm-cm_artif-1.pdf: curv-meas_figures/illustr-dim-norm-cm_artif-1.pdf
+  illustr-dim-norm-cm_artif-1.png: curv-meas_figures/illustr-dim-norm-cm_artif-1.png
+  illustr-dim-norm-cm_ratefct-1.png: curv-meas_figures/illustr-dim-norm-cm_ratefct-1.png
+  illustr-ind-norm-cm-1.pdf: curv-meas_figures/illustr-ind-norm-cm-1.pdf
   illustr-ind-norm-cm-1.png: curv-meas_figures/illustr-ind-norm-cm-1.png
+  illustr-marg-ad-1.pdf: curv-meas_figures/illustr-marg-ad-1.pdf
+  illustr-marg-ad-1.png: curv-meas_figures/illustr-marg-ad-1.png
+  illustr-norm-ad-1.pdf: curv-meas_figures/illustr-norm-ad-1.pdf
+  illustr-norm-ad-1.png: curv-meas_figures/illustr-norm-ad-1.png
+  illustr-pat-bds-1.pdf: curv-meas_figures/illustr-pat-bds-1.pdf
   illustr-pat-bds-1.png: curv-meas_figures/illustr-pat-bds-1.png
+  illustr_params_MNSV-1.pdf: curv-meas_figures/illustr_params_MNSV-1.pdf
   illustr_params_MNSV-1.png: curv-meas_figures/illustr_params_MNSV-1.png
   ind_norm_from_constr_eigval-1.png: curv-meas_figures/ind_norm_from_constr_eigval-1.png
-  indlim_n_cPerc=10_60.png: curv-meas_figures/indlim_n_cPerc=10_60.png
-  indlim_n_cPerc=10_80.png: curv-meas_figures/indlim_n_cPerc=10_80.png
-  indlim_n_cPerc=40_60.png: curv-meas_figures/indlim_n_cPerc=40_60.png
-  indlim_n_cPerc=40_80.png: curv-meas_figures/indlim_n_cPerc=40_80.png
+  leighscurve-1.pdf: curv-meas_figures/leighscurve-1.pdf
   leighscurve-1.png: curv-meas_figures/leighscurve-1.png
+  lim_dens_MNSV-1.pdf: curv-meas_figures/lim_dens_MNSV-1.pdf
   lim_dens_MNSV-1.png: curv-meas_figures/lim_dens_MNSV-1.png
-  nn_nf_np=0_0_40.png: curv-meas_figures/nn_nf_np=0_0_40.png
-  nn_nf_np=0_15_25.png: curv-meas_figures/nn_nf_np=0_15_25.png
-  nn_nf_np=0_40_0.png: curv-meas_figures/nn_nf_np=0_40_0.png
-  nn_nf_np=16_0_24.png: curv-meas_figures/nn_nf_np=16_0_24.png
-  nn_nf_np=20_0_0.png: curv-meas_figures/nn_nf_np=20_0_0.png
-  nn_nf_np=35_5_0.png: curv-meas_figures/nn_nf_np=35_5_0.png
-  nn_nf_np=5_10_25.png: curv-meas_figures/nn_nf_np=5_10_25.png
-  semic_n=10.png: curv-meas_figures/semic_n=10.png
-  semic_n=40.png: curv-meas_figures/semic_n=40.png
+  rate-fct-1.pdf: curv-meas_figures/rate-fct-1.pdf
+  rate-fct-1.png: curv-meas_figures/rate-fct-1.png
+  rate_MNSV-1.pdf: curv-meas_figures/rate_MNSV-1.pdf
+  rate_MNSV-1.png: curv-meas_figures/rate_MNSV-1.png
   curv_meas: curv_meas.html
   curv_meas_tech: curv_meas_tech.html
-  data_plot_generation.R: data_plot_generation.R
+  ind_norm_from_constr_eigval.png: ind_norm_from_constr_eigval.png
+  indlim_n_cPerc=10_60.png: indlim_n_cPerc=10_60.png
+  indlim_n_cPerc=10_80.png: indlim_n_cPerc=10_80.png
+  indlim_n_cPerc=40_60.png: indlim_n_cPerc=40_60.png
+  indlim_n_cPerc=40_80.png: indlim_n_cPerc=40_80.png
+  lim_PhiDim.png: lim_PhiDim.png
+  nn_nf_np=0_0_40.png: nn_nf_np=0_0_40.png
+  nn_nf_np=0_15_25.png: nn_nf_np=0_15_25.png
+  nn_nf_np=0_40_0.png: nn_nf_np=0_40_0.png
+  nn_nf_np=16_0_24.png: nn_nf_np=16_0_24.png
+  nn_nf_np=20_0_0.png: nn_nf_np=20_0_0.png
+  nn_nf_np=35_5_0.png: nn_nf_np=35_5_0.png
+  nn_nf_np=5_10_25.png: nn_nf_np=5_10_25.png
   references.bib: references.bib
+  semic_n=10.png: semic_n=10.png
+  semic_n=40.png: semic_n=40.png
+  var_ivol.png: var_ivol.png
+urls:
+  reference: http://damelunx.github.io/symconivol/reference
+  article: http://damelunx.github.io/symconivol/articles
 

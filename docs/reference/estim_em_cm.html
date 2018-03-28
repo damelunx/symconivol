@@ -11,8 +11,8 @@
 <!-- jquery -->
 <script src="https://code.jquery.com/jquery-3.1.0.min.js" integrity="sha384-nrOSfDHtoPMzJHjVTdCopGqIqeYETSXhZDFyniQ8ZHcVy08QesyHcnOUpMpqnmWq" crossorigin="anonymous"></script>
 <!-- Bootstrap -->
+<link href="https://maxcdn.bootstrapcdn.com/bootswatch/3.3.7/yeti/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous">
 
-<link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
 
 <!-- Font Awesome icons -->
@@ -29,7 +29,11 @@
   
 <meta property="og:title" content="Estimating curvature measures from bivariate chi-bar-squared data using EM algorithm — estim_em_cm" />
 
-<meta property="og:description" content="estim_em_cm" />
+<meta property="og:description" content="estim_em_cm produces EM-type iterates from a two-column
+matrix whose rows form iid samples from a bivariate chi-bar-squared
+distribution." />
+
+<meta property="og:image" content="http://damelunx.github.io/symconivol/logo.png" />
 <meta name="twitter:card" content="summary" />
 <!-- mathjax -->
 <script src='https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML'></script>
@@ -45,7 +49,7 @@
   <body>
     <div class="container template-reference-topic">
       <header>
-      <div class="navbar navbar-default navbar-fixed-top" role="navigation">
+      <div class="navbar navbar-inverse navbar-fixed-top" role="navigation">
   <div class="container">
     <div class="navbar-header">
       <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
@@ -59,32 +63,45 @@
       <ul class="nav navbar-nav">
         <li>
   <a href="../index.html">
-    <span class="fa fa-home fa-lg"></span>
+    <span class="fa fa-home"></span>
      
   </a>
 </li>
 <li>
-  <a href="../reference/index.html">Reference</a>
+  <a href="../reference/symconivol.html">Overview</a>
 </li>
 <li class="dropdown">
   <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
-    Articles
+    Study
      
     <span class="caret"></span>
   </a>
   <ul class="dropdown-menu" role="menu">
     <li>
-      <a href="../articles/curv_meas.html">Studying curvature measures of symmetric cones</a>
+      <a href="../articles/curv_meas.html">Main</a>
     </li>
     <li>
-      <a href="../articles/curv_meas_tech.html">Studying curvature measures of symmetric cones - Technical details</a>
+      <a href="../articles/curv_meas_tech.html">Technical addendum</a>
     </li>
   </ul>
 </li>
       </ul>
       
       <ul class="nav navbar-nav navbar-right">
-        
+        <li>
+  <a href="../reference/index.html">
+    <span class="fa fa-file-code-o"></span>
+     
+    functions &amp; data
+  </a>
+</li>
+<li>
+  <a href="https://github.com/damelunx/symconivol">
+    <span class="fa fa-github fa-lg"></span>
+     
+    github
+  </a>
+</li>
       </ul>
     </div><!--/.nav-collapse -->
   </div><!--/.container -->
@@ -100,7 +117,9 @@
     </div>
 
     
-    <p><code>estim_em_cm</code></p>
+    <p><code>estim_em_cm</code> produces EM-type iterates from a two-column
+matrix whose rows form iid samples from a bivariate chi-bar-squared
+distribution.</p>
     
 
     <pre class="usage"><span class='fu'>estim_em_cm</span>(<span class='no'>d</span>, <span class='no'>low</span>, <span class='no'>upp</span>, <span class='no'>m_samp</span>, <span class='kw'>N</span> <span class='kw'>=</span> <span class='fl'>20</span>, <span class='kw'>no_of_lcc_projections</span> <span class='kw'>=</span> <span class='fl'>1</span>,
@@ -111,50 +130,80 @@
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
       <th>d</th>
-      <td><p>parameter description</p></td>
+      <td><p>the dimension of the bivariate chi-bar-squared distribution.</p></td>
     </tr>
     <tr>
       <th>low</th>
-      <td><p>parameter description</p></td>
+      <td><p>lower bound for <code>k</code>; has to be <code>&gt;0</code></p></td>
     </tr>
     <tr>
       <th>upp</th>
-      <td><p>parameter description</p></td>
+      <td><p>upper bound for <code>k</code>; has to be <code>&lt;d</code></p></td>
     </tr>
     <tr>
       <th>m_samp</th>
-      <td><p>parameter description</p></td>
+      <td><p>two-column matrix whose rows from iid samples from a bivariate
+chi-bar-squared distribution.</p></td>
     </tr>
     <tr>
       <th>N</th>
-      <td><p>parameter description</p></td>
+      <td><p>the number of iterates that shall be produced.</p></td>
+    </tr>
+    <tr>
+      <th>no_of_lcc_projections</th>
+      <td><p>number of projections on the log-concavity cone</p></td>
     </tr>
     <tr>
       <th>data</th>
-      <td><p>parameter description</p></td>
-    </tr>
-    <tr>
-      <th>no_off_lcc_projections</th>
-      <td><p>parameter description</p></td>
+      <td><p>output of <code><a href='prepare_em_cm.html'>prepare_em_cm(d, low, upp, m_samp)</a></code>; this can be called
+outside and passed as input to avoid re-executing this
+potentially time-consuming step.</p></td>
     </tr>
     </table>
     
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>returns what</p>
+    <p>The output of <code>estim_em_cm</code> is a list of an <code>(N+1)</code>-by-<code>(upp-low+1)</code>
+        matrix whose rows constitute EM-type iterates, which may or may not
+        converge to the maximum likelihood estimate of the mixing weights of
+        the bivariate chi-bar-squared distribution, and the corresponding values
+        of the log-likelihood function.</p>
+    
+    <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
+
+    <p>The sequence of iterates may or may not converge
+to the maximum likelihood estimate of the mixing weights of the distribution.
+Log-concavity of the weights is enforced by projecting the logarithms
+onto the cone of log-concave sequences; this can be turned off by setting
+<code>no_of_lcc_projections=0</code>.
+This function is adapted from <code>estim_em</code> from the <code>conivol</code>
+package, the difference being that the support of the weights is strictly
+between the boundary cases. It is simplified in that the initial estimate
+is always the uniform distribution, and the parity equation,
+which does not hold for curvature measures, will not be enforced.</p>
     
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
-    <p><code><a href='constr_eigval.html'>constr_eigval</a></code>, 
+    <p><code>estim_em</code>, 
+<code><a href='constr_eigval.html'>constr_eigval</a></code>, 
 <code><a href='constr_eigval_to_bcbsq.html'>constr_eigval_to_bcbsq</a></code>, 
 <code><a href='prepare_em_cm.html'>prepare_em_cm</a></code>,
-<code><a href='indnorm_to_unnorm.html'>indnorm_to_unnorm</a></code></p>
+<code>indnorm_to_unnorm</code></p>
 <p>Package: <code><a href='symconivol.html'>symconivol</a></code></p>
     
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'># some example code
+    <pre class="examples"><div class='input'><span class='no'>CM</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='curv_meas_exact.html'>curv_meas_exact</a></span>(<span class='fl'>4</span>,<span class='fl'>3</span>)$<span class='no'>A</span>[,<span class='fl'>2</span>]
+<span class='no'>CM</span> <span class='kw'>&lt;-</span> <span class='no'>CM</span>/<span class='fu'>sum</span>(<span class='no'>CM</span>)
 
+<span class='no'>m_samp</span> <span class='kw'>&lt;-</span> <span class='kw pkg'>conivol</span><span class='kw ns'>::</span><span class='fu'>rbichibarsq</span>(<span class='fl'>1e5</span>,<span class='no'>CM</span>)
+
+<span class='no'>d</span>   <span class='kw'>&lt;-</span> <span class='fl'>15</span>
+<span class='no'>low</span> <span class='kw'>&lt;-</span> <span class='fl'>1</span>
+<span class='no'>upp</span> <span class='kw'>&lt;-</span> <span class='fl'>9</span>
+<span class='no'>est</span> <span class='kw'>&lt;-</span> <span class='fu'>estim_em_cm</span>( <span class='no'>d</span>, <span class='no'>low</span>, <span class='no'>upp</span>, <span class='no'>m_samp</span> )
+
+<span class='fu'>plot</span>(<span class='fl'>1</span>+<span class='no'>low</span>:<span class='no'>upp</span>, <span class='no'>CM</span>[<span class='fl'>1</span>+<span class='no'>low</span>:<span class='no'>upp</span>])</div><div class='input'><span class='fu'>lines</span>(<span class='fl'>1</span>+<span class='no'>low</span>:<span class='no'>upp</span>, <span class='no'>CM</span>[<span class='fl'>1</span>+<span class='no'>low</span>:<span class='no'>upp</span>], <span class='kw'>col</span><span class='kw'>=</span><span class='st'>"red"</span>)</div><div class='input'><span class='fu'>lines</span>(<span class='fl'>1</span>+<span class='no'>low</span>:<span class='no'>upp</span>, <span class='no'>est</span>[<span class='fl'>1</span>,])</div><div class='input'><span class='fu'>lines</span>(<span class='fl'>1</span>+<span class='no'>low</span>:<span class='no'>upp</span>, <span class='no'>est</span>[<span class='fl'>5</span>,])</div><div class='input'><span class='fu'>lines</span>(<span class='fl'>1</span>+<span class='no'>low</span>:<span class='no'>upp</span>, <span class='no'>est</span>[<span class='fl'>10</span>,])</div><div class='input'><span class='fu'>lines</span>(<span class='fl'>1</span>+<span class='no'>low</span>:<span class='no'>upp</span>, <span class='no'>est</span>[<span class='fl'>21</span>,])</div><div class='img'><img src='estim_em_cm-1.png' alt='' width='700' height='432.632880098887' /></div><div class='input'>
 </div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
@@ -163,6 +212,8 @@
       <li><a href="#arguments">Arguments</a></li>
       
       <li><a href="#value">Value</a></li>
+
+      <li><a href="#details">Details</a></li>
 
       <li><a href="#see-also">See also</a></li>
       

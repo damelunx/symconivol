@@ -4,24 +4,41 @@
 \alias{constr_eigval}
 \title{Stan model creation for sampling index constrained eigenvalues from the Gaussian orthogonal/unitary/symplectic ensembles}
 \usage{
-constr_eigval(pos, free, neg, filename = NA, overwrite = FALSE)
+constr_eigval(beta, n, ind_low, ind_upp, filename = NA, overwrite = FALSE)
 }
 \arguments{
-\item{pos}{parameter description}
+\item{beta}{Dyson index specifying the underlying (skew-) field:
+\describe{
+  \item{\code{beta==1}:}{real numbers}
+  \item{\code{beta==2}:}{complex numbers}
+  \item{\code{beta==4}:}{quaternion numbers}
+}}
 
-\item{free}{parameter description}
+\item{n}{size of matrix.}
 
-\item{neg}{parameter description}
+\item{ind_low}{lower bound for index}
 
-\item{filename}{parameter description}
+\item{ind_upp}{upper bound for index}
 
-\item{overwrite}{parameter description}
+\item{filename}{filename for output}
+
+\item{overwrite}{logical; determines whether the output should overwrite an existing file}
 }
 \value{
-returns what
+The output of \code{constr_eigval} is a list containing the following elements:
+\itemize{
+  \item \code{model}: a string that forms the description of the Stan model,
+  \item \code{data}: a data list containing the prepared data to be used
+                   for defining a Stan model object (\code{beta}, number of positive, free,
+                   negative eigenvalues).
+}
+If \code{filename!=NA} then the model string will also be written to the file with
+the specified name.
 }
 \description{
-\code{constr_eigval}
+\code{constr_eigval} generates inputs for Stan (model string or external file)
+for sampling eigenvalues from the Gaussian orthogonal/unitary/symplectic ensembles
+with prescriped range for the index (number of positive eigenvalues).
 }
 \section{See also}{
 
@@ -33,6 +50,24 @@ Package: \code{\link[symconivol]{symconivol}}
 }
 
 \examples{
-# some example code
+\dontrun{
+library(tidyverse)
+library(rstan)
+
+filename <- "tmp.stan"
+M <- constr_eigval( beta=2, n=12, ind_low=8, ind_upp=9, filename=filename )
+stan_samp <- stan( file = filename, data = M$data,
+                   chains = 1, warmup = 1e3, iter = 1e5, cores = 2, refresh = 1e4 )
+file.remove(filename)
+
+tib_ep <- rstan::extract(stan_samp)$ep \%>\% as_tibble() \%>\% gather() \%>\% add_column(type="0")
+tib_ef <- rstan::extract(stan_samp)$ef \%>\% as_tibble() \%>\% gather() \%>\% add_column(type="1")
+tib_en <- rstan::extract(stan_samp)$en \%>\% as_tibble() \%>\% gather() \%>\% add_column(type="2")
+tib <- bind_rows(tib_ep, tib_ef, tib_en)
+
+ggplot() +
+    geom_density(data=tib, aes(x=value, y=..count.., group=type, color=type, fill=type), alpha=0.5, bw=0.03) + theme_bw() +
+    theme(axis.title.y=element_blank(), axis.text.y=element_blank(), axis.ticks.y=element_blank(), legend.position="none")
+}
 
 }

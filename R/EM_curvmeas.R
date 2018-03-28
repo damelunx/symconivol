@@ -1,14 +1,15 @@
-#' Converting samples of index constrained eigenvalues to samples of bivariate-chi-bar-squared distribution
+#' Converting samples of index constrained eigenvalues to samples of bivariate chi-bar-squared distribution
 #' 
-#' \code{constr_eigval_to_bcbsq}
+#' \code{constr_eigval_to_bcbsq} converts samples of the index constrained
+#' eigenvalue distribution to samples of the corresponding bivariate
+#' chi-bar-squared distribution.
 #' 
-#' @param pos parameter description
-#' @param free parameter description
-#' @param neg parameter description
-#' @param samp parameter description
-#' @param filename parameter description
+#' @param samp a list containing (a selection of) the elements \'ep\', \'ef\', \'en\',
+#'             which are matrices (of the same length) whose rows give the sampled eigenvalues
 #' 
-#' @return returns what
+#' @return The output of \code{constr_eigval_to_bcbsq} is a two-column matrices
+#'         whose rows correspond to the samples from the bivariate
+#'         chi-bar-squared distribution.
 #' 
 #' @section See also:
 #' \code{\link[symconivol]{constr_eigval}}, 
@@ -18,23 +19,28 @@
 #' Package: \code{\link[symconivol]{symconivol}}
 #' 
 #' @examples
-#' # some example code
+#' \dontrun{
+#' library(tidyverse)
+#' library(rstan)
+#' 
+#' filename <- "tmp.stan"
+#' M <- constr_eigval( beta=2, n=12, ind_low=8, ind_upp=9, filename=filename )
+#' stan_samp <- stan( file = filename, data = M$data,
+#'                    chains = 1, warmup = 1e3, iter = 1e5, cores = 2, refresh = 1e4 )
+#' file.remove(filename)
+#' 
+#' m_samp <- constr_eigval_to_bcbsq( rstan::extract(stan_samp) )
+#' }
 #' 
 #' @export
 #'
-constr_eigval_to_bcbsq <- function(pos, free, neg, samp=NA, filename=NA) {
-    if ( !pos & !free & !neg ) stop("\n Empty model.")
-    if ( (is.na(samp) && is.na(filename)) || (!is.na(samp) && !is.na(filename)) )
-        stop("\n Must give either sample matrix or sample file.")
-    if ( !is.na(filename) && !file.exists(filename) )
-        stop("\n File with given filename does not exist.")
-
-    if ( !is.na(filename) ) {
-        e <- new.env()
-        samp_str <- load(file=filename, envir=e)
-        samp <- get(samp_str, envir=e)
-    }
+constr_eigval_to_bcbsq <- function(samp) {
+    neg  <- "en" %in% names(samp)
+    free <- "ef" %in% names(samp)
+    pos  <- "ep" %in% names(samp)
     
+    if ( !pos & !free & !neg ) stop("\n Empty model (list elements have to be named \'ep\', \'ef\', \'en\' for positive, free, negative eigenvalues, respectively.")
+
     if (pos)        n <- dim(samp$ep)[1]
     else if (free)  n <- dim(samp$ef)[1]
     else if (neg)   n <- dim(samp$en)[1]
@@ -54,16 +60,29 @@ constr_eigval_to_bcbsq <- function(pos, free, neg, samp=NA, filename=NA) {
 
 #' Evaluate bivariate chi-bar-squared samples for maximum likelihood estimation
 #' 
-#' \code{prepare_em_cm}
+#' \code{prepare_em_cm} takes a two-column matrix whose rows form
+#' iid samples from a bivariate chi-bar-squared distribution and
+#' prepares the data used in maximum likelihood estimation.
+#'
+#' This function works pretty much exactly as \code{prepare_em} from the
+#' \code{conivol} package, the only difference being that the "boundary
+#' cases" \code{k==0,n} do not have to be considered/are ignored.
+#' In the general case this is not needed, but for the curvature
+#' measures this is a useful feature.
 #' 
-#' @param d parameter description
-#' @param low parameter description
-#' @param upp parameter description
-#' @param m_samp parameter description
+#' @param d the dimension of the bivariate chi-bar squared distribution.
+#' @param low lower bound for \code{k}; has to be \code{>0}
+#' @param upp upper bound for \code{k}; has to be \code{<d}
+#' @param m_samp two-column matrix whose rows from iid samples from a bivariate
+#'               chi-bar-squared distribution.
 #' 
-#' @return returns what
+#' @return The output of \code{prepare_em_cm} is \code{(low-upp+1)} row matrix whose
+#'         \code{k}th row contains the products of the density values of the chi_k^2
+#'         and chi_(d-k)^2 distributions evaluated in the sample points;
+#'         the row-form of the matrix is more convenient for the computations.
 #' 
 #' @section See also:
+#' \code{\link[conivol]{prepare_em}}, 
 #' \code{\link[symconivol]{constr_eigval}}, 
 #' \code{\link[symconivol]{constr_eigval_to_bcbsq}}, 
 #' \code{\link[symconivol]{estim_em_cm}}
@@ -71,16 +90,18 @@ constr_eigval_to_bcbsq <- function(pos, free, neg, samp=NA, filename=NA) {
 #' Package: \code{\link[symconivol]{symconivol}}
 #' 
 #' @examples
-#' # some example code
+#' CM <- curv_meas_exact(4,3)$A[,2]
+#' CM <- CM/sum(CM)
+#' 
+#' m_samp <- conivol::rbichibarsq(1e5,CM)
+#' 
+#' str( prepare_em_cm( 15, 1, 9, m_samp ))
 #' 
 #' @export
 #'
 prepare_em_cm <- function(d, low, upp, m_samp) {
     # low>0, upp<d
-    return( list( d=d, low=low, upp=upp, n=dim(m_samp)[1],
-                  dens=apply( m_samp, 1, 
-                   function(x){dchisq(x[1],low:upp)*dchisq(x[2],(d-low):(d-upp))}
-            ) ) )
+    return( apply( m_samp, 1, function(x){dchisq(x[1],low:upp)*dchisq(x[2],(d-low):(d-upp))} ) )
 }
 
 
@@ -123,19 +144,40 @@ prepare_em_cm <- function(d, low, upp, m_samp) {
 
 #' Estimating curvature measures from bivariate chi-bar-squared data using EM algorithm
 #' 
-#' \code{estim_em_cm}
+#' \code{estim_em_cm} produces EM-type iterates from a two-column
+#' matrix whose rows form iid samples from a bivariate chi-bar-squared
+#' distribution.
+#'
+#' The sequence of iterates may or may not converge
+#' to the maximum likelihood estimate of the mixing weights of the distribution.
+#' Log-concavity of the weights is enforced by projecting the logarithms
+#' onto the cone of log-concave sequences; this can be turned off by setting
+#' \code{no_of_lcc_projections=0}.
+#' This function is adapted from \code{estim_em} from the \code{conivol}
+#' package, the difference being that the support of the weights is strictly
+#' between the boundary cases. It is simplified in that the initial estimate
+#' is always the uniform distribution, and the parity equation,
+#' which does not hold for curvature measures, will not be enforced.
 #' 
-#' @param d parameter description
-#' @param low parameter description
-#' @param upp parameter description
-#' @param m_samp parameter description
-#' @param N parameter description
-#' @param no_off_lcc_projections parameter description
-#' @param data parameter description
+#' @param d the dimension of the bivariate chi-bar-squared distribution.
+#' @param low lower bound for \code{k}; has to be \code{>0}
+#' @param upp upper bound for \code{k}; has to be \code{<d}
+#' @param m_samp two-column matrix whose rows from iid samples from a bivariate
+#'               chi-bar-squared distribution.
+#' @param N the number of iterates that shall be produced.
+#' @param no_of_lcc_projections number of projections on the log-concavity cone
+#' @param data output of \code{prepare_em_cm(d, low, upp, m_samp)}; this can be called
+#'              outside and passed as input to avoid re-executing this
+#'              potentially time-consuming step.
 #' 
-#' @return returns what
+#' @return The output of \code{estim_em_cm} is a list of an \code{(N+1)}-by-\code{(upp-low+1)}
+#'         matrix whose rows constitute EM-type iterates, which may or may not
+#'         converge to the maximum likelihood estimate of the mixing weights of
+#'         the bivariate chi-bar-squared distribution, and the corresponding values
+#'         of the log-likelihood function.
 #' 
 #' @section See also:
+#' \code{\link[conivol]{estim_em}}, 
 #' \code{\link[symconivol]{constr_eigval}}, 
 #' \code{\link[symconivol]{constr_eigval_to_bcbsq}}, 
 #' \code{\link[symconivol]{prepare_em_cm}},
@@ -144,7 +186,22 @@ prepare_em_cm <- function(d, low, upp, m_samp) {
 #' Package: \code{\link[symconivol]{symconivol}}
 #' 
 #' @examples
-#' # some example code
+#' CM <- curv_meas_exact(4,3)$A[,2]
+#' CM <- CM/sum(CM)
+#' 
+#' m_samp <- conivol::rbichibarsq(1e5,CM)
+#' 
+#' d   <- 15
+#' low <- 1
+#' upp <- 9
+#' est <- estim_em_cm( d, low, upp, m_samp )
+#' 
+#' plot(1+low:upp, CM[1+low:upp])
+#' lines(1+low:upp, CM[1+low:upp], col="red")
+#' lines(1+low:upp, est[1,])
+#' lines(1+low:upp, est[5,])
+#' lines(1+low:upp, est[10,])
+#' lines(1+low:upp, est[21,])
 #' 
 #' @export
 #'
@@ -162,6 +219,7 @@ estim_em_cm <- function(d, low, upp, m_samp, N=20, no_of_lcc_projections=1, data
     # find the values of the chi-squared densities at the sample points
     if (is.null(data))
         data <- symconivol::prepare_em_cm(d, low, upp, m_samp)
+    n <- dim(m_samp)[1]
     
     out_iterates <- matrix(0,N+1,upp-low+1)
 
@@ -170,7 +228,7 @@ estim_em_cm <- function(d, low, upp, m_samp, N=20, no_of_lcc_projections=1, data
     out_iterates[1, ] <- v
 
     # prepare Mosek inputs
-    mos_inp <- .create_mosek_input_em_cm(rep(0,upp-low+1))
+    mos_inp <- symconivol:::.create_mosek_input_em_cm(rep(0,upp-low+1))
     
     # prepare Mosek inputs for log-concavity enforcing
     A_lcc <- matrix(0,upp-low+1,upp-low-1)
@@ -183,12 +241,13 @@ estim_em_cm <- function(d, low, upp, m_samp, N=20, no_of_lcc_projections=1, data
         diag(A_lcc[3:(upp-low+1),]) <- 1
     }
     mos_inp_lcc <- conivol:::.create_mosek_input_polyh_pol(A_lcc, rep(0,upp-low+1), 0)
-    
     for (i in 1:N) {
-        denom <- colSums( data$dens * v )
-        const <- rowSums( sweep( 1/data$n * data$dens * v , MARGIN=2, denom, "/") )
-        mos_inp <- .update_mosek_input_em_cm(mos_inp,const)
+        denom <- colSums( data * v )
+        const <- rowSums( sweep( 1/n * data * v , MARGIN=2, denom, "/") )
+        mos_inp <- symconivol:::.update_mosek_input_em_cm(mos_inp,const)
         mos_out <- Rmosek::mosek(mos_inp, opts)
+        if (mos_out$response$code==1001)
+            stop("Mosek license has expired.")
         v <- mos_out$sol$itr$xx
         if (no_of_lcc_projections>0)
             for (i_lcc in (1:no_of_lcc_projections)) {

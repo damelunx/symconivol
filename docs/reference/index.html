@@ -11,8 +11,8 @@
 <!-- jquery -->
 <script src="https://code.jquery.com/jquery-3.1.0.min.js" integrity="sha384-nrOSfDHtoPMzJHjVTdCopGqIqeYETSXhZDFyniQ8ZHcVy08QesyHcnOUpMpqnmWq" crossorigin="anonymous"></script>
 <!-- Bootstrap -->
+<link href="https://maxcdn.bootstrapcdn.com/bootswatch/3.3.7/yeti/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous">
 
-<link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
 
 <!-- Font Awesome icons -->
@@ -28,6 +28,9 @@
   
   
 <meta property="og:title" content="Function reference" />
+
+<meta property="og:image" content="http://damelunx.github.io/symconivol/logo.png" />
+<meta name="twitter:card" content="summary" />
 <!-- mathjax -->
 <script src='https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML'></script>
 
@@ -42,7 +45,7 @@
   <body>
     <div class="container template-reference-index">
       <header>
-      <div class="navbar navbar-default navbar-fixed-top" role="navigation">
+      <div class="navbar navbar-inverse navbar-fixed-top" role="navigation">
   <div class="container">
     <div class="navbar-header">
       <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
@@ -56,32 +59,45 @@
       <ul class="nav navbar-nav">
         <li>
   <a href="../index.html">
-    <span class="fa fa-home fa-lg"></span>
+    <span class="fa fa-home"></span>
      
   </a>
 </li>
 <li>
-  <a href="../reference/index.html">Reference</a>
+  <a href="../reference/symconivol.html">Overview</a>
 </li>
 <li class="dropdown">
   <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
-    Articles
+    Study
      
     <span class="caret"></span>
   </a>
   <ul class="dropdown-menu" role="menu">
     <li>
-      <a href="../articles/curv_meas.html">Studying curvature measures of symmetric cones</a>
+      <a href="../articles/curv_meas.html">Main</a>
     </li>
     <li>
-      <a href="../articles/curv_meas_tech.html">Studying curvature measures of symmetric cones - Technical details</a>
+      <a href="../articles/curv_meas_tech.html">Technical addendum</a>
     </li>
   </ul>
 </li>
       </ul>
       
       <ul class="nav navbar-nav navbar-right">
-        
+        <li>
+  <a href="../reference/index.html">
+    <span class="fa fa-file-code-o"></span>
+     
+    functions &amp; data
+  </a>
+</li>
+<li>
+  <a href="https://github.com/damelunx/symconivol">
+    <span class="fa fa-github fa-lg"></span>
+     
+    github
+  </a>
+</li>
       </ul>
     </div><!--/.nav-collapse -->
   </div><!--/.container -->
@@ -95,7 +111,7 @@
     <div class="page-header">
       <h1>
         Reference
-        <small>version&nbsp;0.0.0.900</small>
+        <small>version&nbsp;0.0.1</small>
       </h1>
     </div>
 
@@ -110,16 +126,40 @@
       <tbody>
         <tr>
           <th colspan="2">
-            <h2 id="section-all-functions" class="hasAnchor"><a href="#section-all-functions" class="anchor"></a>All functions</h2>
+            <h2 id="section-exported-functions" class="hasAnchor"><a href="#section-exported-functions" class="anchor"></a>Exported Functions</h2>
             <p class="section-desc"></p>
           </th>
         </tr>
         <tr>
           <!--  -->
           <td>
-            <p><code><a href="alg_deg.html">alg_deg</a></code> </p>
+            <p><code><a href="curv_meas_exact.html">curv_meas_exact</a></code> </p>
           </td>
-          <td><p>Algebraic degree of semidefinite programming</p></td>
+          <td><p>Exact curvature measures of symmetric cones</p></td>
+        </tr><tr>
+          <!--  -->
+          <td>
+            <p><code><a href="pat_bnd.html">pat_bnd</a></code> </p>
+          </td>
+          <td><p>Pataki bounds</p></td>
+        </tr><tr>
+          <!--  -->
+          <td>
+            <p><code><a href="leigh.html">leigh</a></code> </p>
+          </td>
+          <td><p>Leigh's curve</p></td>
+        </tr><tr>
+          <!--  -->
+          <td>
+            <p><code><a href="rate.html">rate</a></code> </p>
+          </td>
+          <td><p>Large deviation rate function for index probability</p></td>
+        </tr><tr>
+          <!--  -->
+          <td>
+            <p><code><a href="mu.html">mu</a></code> </p>
+          </td>
+          <td><p>Estimated limit curve for the dimension normalized curvature measures</p></td>
         </tr><tr>
           <!--  -->
           <td>
@@ -131,37 +171,7 @@
           <td>
             <p><code><a href="constr_eigval_to_bcbsq.html">constr_eigval_to_bcbsq</a></code> </p>
           </td>
-          <td><p>Converting samples of index constrained eigenvalues to samples of bivariate-chi-bar-squared distribution</p></td>
-        </tr><tr>
-          <!--  -->
-          <td>
-            <p><code><a href="curv_meas_exact.html">curv_meas_exact</a></code> </p>
-          </td>
-          <td><p>Exact curvature measures of symmetric cones</p></td>
-        </tr><tr>
-          <!--  -->
-          <td>
-            <p><code><a href="estim_em_cm.html">estim_em_cm</a></code> </p>
-          </td>
-          <td><p>Estimating curvature measures from bivariate chi-bar-squared data using EM algorithm</p></td>
-        </tr><tr>
-          <!--  -->
-          <td>
-            <p><code><a href="indnorm_to_unnorm.html">indnorm_to_unnorm</a></code> </p>
-          </td>
-          <td><p>Estimating curvature measures from index normalized curvature measures</p></td>
-        </tr><tr>
-          <!--  -->
-          <td>
-            <p><code><a href="leigh.html">leigh</a></code> </p>
-          </td>
-          <td><p>Leigh's curve</p></td>
-        </tr><tr>
-          <!--  -->
-          <td>
-            <p><code><a href="pat_bnd.html">pat_bnd</a></code> </p>
-          </td>
-          <td><p>Pataki bounds</p></td>
+          <td><p>Converting samples of index constrained eigenvalues to samples of bivariate chi-bar-squared distribution</p></td>
         </tr><tr>
           <!--  -->
           <td>
@@ -171,9 +181,47 @@
         </tr><tr>
           <!--  -->
           <td>
-            <p><code><a href="symconivol.html">symconivol</a></code> </p>
+            <p><code><a href="estim_em_cm.html">estim_em_cm</a></code> </p>
           </td>
-          <td><p>symconivol: A package for curvature measures of symmetric cones</p></td>
+          <td><p>Estimating curvature measures from bivariate chi-bar-squared data using EM algorithm</p></td>
+        </tr><tr>
+          <!--  -->
+          <td>
+            <p><code><a href="alg_deg.html">alg_deg</a></code> </p>
+          </td>
+          <td><p>Algebraic degree of semidefinite programming</p></td>
+        </tr>
+      </tbody><tbody>
+        <tr>
+          <th colspan="2">
+            <h2 id="section-data" class="hasAnchor"><a href="#section-data" class="anchor"></a>Data</h2>
+            <p class="section-desc"></p>
+          </th>
+        </tr>
+        <tr>
+          <!--  -->
+          <td>
+            <p><code><a href="ind_prob.html">ind_prob</a></code> </p>
+          </td>
+          <td><p>Ratios of index probabilities</p></td>
+        </tr><tr>
+          <!--  -->
+          <td>
+            <p><code><a href="phi_ind.html">phi_ind</a></code> </p>
+          </td>
+          <td><p>Reconstructed values of index constrained curvature measures</p></td>
+        </tr><tr>
+          <!--  -->
+          <td>
+            <p><code><a href="mu_data.html">mu_data</a></code> </p>
+          </td>
+          <td><p>Values of estimated limit curve of dimension normalized curvature measures</p></td>
+        </tr><tr>
+          <!--  -->
+          <td>
+            <p><code><a href="alg_deg_data.html">alg_deg_data</a></code> </p>
+          </td>
+          <td><p>Algebraic degree of semidefinite programming</p></td>
         </tr>
       </tbody>
       </table>
@@ -183,7 +231,8 @@
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>
     <ul class="nav nav-pills nav-stacked">
-      <li><a href="#section-all-functions">All functions</a></li>
+      <li><a href="#section-exported-functions">Exported Functions</a></li>
+      <li><a href="#section-data">Data</a></li>
     </ul>
   </div>
 </div>

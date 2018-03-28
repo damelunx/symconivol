@@ -8,28 +8,50 @@ estim_em_cm(d, low, upp, m_samp, N = 20, no_of_lcc_projections = 1,
   data = NULL)
 }
 \arguments{
-\item{d}{parameter description}
+\item{d}{the dimension of the bivariate chi-bar-squared distribution.}
 
-\item{low}{parameter description}
+\item{low}{lower bound for \code{k}; has to be \code{>0}}
 
-\item{upp}{parameter description}
+\item{upp}{upper bound for \code{k}; has to be \code{<d}}
 
-\item{m_samp}{parameter description}
+\item{m_samp}{two-column matrix whose rows from iid samples from a bivariate
+chi-bar-squared distribution.}
 
-\item{N}{parameter description}
+\item{N}{the number of iterates that shall be produced.}
 
-\item{data}{parameter description}
+\item{no_of_lcc_projections}{number of projections on the log-concavity cone}
 
-\item{no_off_lcc_projections}{parameter description}
+\item{data}{output of \code{prepare_em_cm(d, low, upp, m_samp)}; this can be called
+outside and passed as input to avoid re-executing this
+potentially time-consuming step.}
 }
 \value{
-returns what
+The output of \code{estim_em_cm} is a list of an \code{(N+1)}-by-\code{(upp-low+1)}
+        matrix whose rows constitute EM-type iterates, which may or may not
+        converge to the maximum likelihood estimate of the mixing weights of
+        the bivariate chi-bar-squared distribution, and the corresponding values
+        of the log-likelihood function.
 }
 \description{
-\code{estim_em_cm}
+\code{estim_em_cm} produces EM-type iterates from a two-column
+matrix whose rows form iid samples from a bivariate chi-bar-squared
+distribution.
+}
+\details{
+The sequence of iterates may or may not converge
+to the maximum likelihood estimate of the mixing weights of the distribution.
+Log-concavity of the weights is enforced by projecting the logarithms
+onto the cone of log-concave sequences; this can be turned off by setting
+\code{no_of_lcc_projections=0}.
+This function is adapted from \code{estim_em} from the \code{conivol}
+package, the difference being that the support of the weights is strictly
+between the boundary cases. It is simplified in that the initial estimate
+is always the uniform distribution, and the parity equation,
+which does not hold for curvature measures, will not be enforced.
 }
 \section{See also}{
 
+\code{\link[conivol]{estim_em}}, 
 \code{\link[symconivol]{constr_eigval}}, 
 \code{\link[symconivol]{constr_eigval_to_bcbsq}}, 
 \code{\link[symconivol]{prepare_em_cm}},
@@ -39,6 +61,21 @@ Package: \code{\link[symconivol]{symconivol}}
 }
 
 \examples{
-# some example code
+CM <- curv_meas_exact(4,3)$A[,2]
+CM <- CM/sum(CM)
+
+m_samp <- conivol::rbichibarsq(1e5,CM)
+
+d   <- 15
+low <- 1
+upp <- 9
+est <- estim_em_cm( d, low, upp, m_samp )
+
+plot(1+low:upp, CM[1+low:upp])
+lines(1+low:upp, CM[1+low:upp], col="red")
+lines(1+low:upp, est[1,])
+lines(1+low:upp, est[5,])
+lines(1+low:upp, est[10,])
+lines(1+low:upp, est[21,])
 
 }

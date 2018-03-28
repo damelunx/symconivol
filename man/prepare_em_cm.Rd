@@ -7,22 +7,36 @@
 prepare_em_cm(d, low, upp, m_samp)
 }
 \arguments{
-\item{d}{parameter description}
+\item{d}{the dimension of the bivariate chi-bar squared distribution.}
 
-\item{low}{parameter description}
+\item{low}{lower bound for \code{k}; has to be \code{>0}}
 
-\item{upp}{parameter description}
+\item{upp}{upper bound for \code{k}; has to be \code{<d}}
 
-\item{m_samp}{parameter description}
+\item{m_samp}{two-column matrix whose rows from iid samples from a bivariate
+chi-bar-squared distribution.}
 }
 \value{
-returns what
+The output of \code{prepare_em_cm} is \code{(low-upp+1)} row matrix whose
+        \code{k}th row contains the products of the density values of the chi_k^2
+        and chi_(d-k)^2 distributions evaluated in the sample points;
+        the row-form of the matrix is more convenient for the computations.
 }
 \description{
-\code{prepare_em_cm}
+\code{prepare_em_cm} takes a two-column matrix whose rows form
+iid samples from a bivariate chi-bar-squared distribution and
+prepares the data used in maximum likelihood estimation.
+}
+\details{
+This function works pretty much exactly as \code{prepare_em} from the
+\code{conivol} package, the only difference being that the "boundary
+cases" \code{k==0,n} do not have to be considered/are ignored.
+In the general case this is not needed, but for the curvature
+measures this is a useful feature.
 }
 \section{See also}{
 
+\code{\link[conivol]{prepare_em}}, 
 \code{\link[symconivol]{constr_eigval}}, 
 \code{\link[symconivol]{constr_eigval_to_bcbsq}}, 
 \code{\link[symconivol]{estim_em_cm}}
@@ -31,6 +45,11 @@ Package: \code{\link[symconivol]{symconivol}}
 }
 
 \examples{
-# some example code
+CM <- curv_meas_exact(4,3)$A[,2]
+CM <- CM/sum(CM)
+
+m_samp <- conivol::rbichibarsq(1e5,CM)
+
+str( prepare_em_cm( 15, 1, 9, m_samp ))
 
 }

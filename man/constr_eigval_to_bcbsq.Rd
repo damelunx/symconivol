@@ -2,26 +2,23 @@
 % Please edit documentation in R/EM_curvmeas.R
 \name{constr_eigval_to_bcbsq}
 \alias{constr_eigval_to_bcbsq}
-\title{Converting samples of index constrained eigenvalues to samples of bivariate-chi-bar-squared distribution}
+\title{Converting samples of index constrained eigenvalues to samples of bivariate chi-bar-squared distribution}
 \usage{
-constr_eigval_to_bcbsq(pos, free, neg, samp = NA, filename = NA)
+constr_eigval_to_bcbsq(samp)
 }
 \arguments{
-\item{pos}{parameter description}
-
-\item{free}{parameter description}
-
-\item{neg}{parameter description}
-
-\item{samp}{parameter description}
-
-\item{filename}{parameter description}
+\item{samp}{a list containing (a selection of) the elements \'ep\', \'ef\', \'en\',
+which are matrices (of the same length) whose rows give the sampled eigenvalues}
 }
 \value{
-returns what
+The output of \code{constr_eigval_to_bcbsq} is a two-column matrices
+        whose rows correspond to the samples from the bivariate
+        chi-bar-squared distribution.
 }
 \description{
-\code{constr_eigval_to_bcbsq}
+\code{constr_eigval_to_bcbsq} converts samples of the index constrained
+eigenvalue distribution to samples of the corresponding bivariate
+chi-bar-squared distribution.
 }
 \section{See also}{
 
@@ -33,6 +30,17 @@ Package: \code{\link[symconivol]{symconivol}}
 }
 
 \examples{
-# some example code
+\dontrun{
+library(tidyverse)
+library(rstan)
+
+filename <- "tmp.stan"
+M <- constr_eigval( beta=2, n=12, ind_low=8, ind_upp=9, filename=filename )
+stan_samp <- stan( file = filename, data = M$data,
+                   chains = 1, warmup = 1e3, iter = 1e5, cores = 2, refresh = 1e4 )
+file.remove(filename)
+
+m_samp <- constr_eigval_to_bcbsq( rstan::extract(stan_samp) )
+}
 
 }

@@ -1,14 +1,30 @@
 #' Stan model creation for sampling index constrained eigenvalues from the Gaussian orthogonal/unitary/symplectic ensembles
 #' 
-#' \code{constr_eigval}
+#' \code{constr_eigval} generates inputs for Stan (model string or external file)
+#' for sampling eigenvalues from the Gaussian orthogonal/unitary/symplectic ensembles
+#' with prescriped range for the index (number of positive eigenvalues).
 #' 
-#' @param pos parameter description
-#' @param free parameter description
-#' @param neg parameter description
-#' @param filename parameter description
-#' @param overwrite parameter description
+#' @param beta Dyson index specifying the underlying (skew-) field:
+#'             \describe{
+#'               \item{\code{beta==1}:}{real numbers}
+#'               \item{\code{beta==2}:}{complex numbers}
+#'               \item{\code{beta==4}:}{quaternion numbers}
+#'             }
+#' @param n size of matrix.
+#' @param ind_low lower bound for index
+#' @param ind_upp upper bound for index
+#' @param filename filename for output
+#' @param overwrite logical; determines whether the output should overwrite an existing file
 #' 
-#' @return returns what
+#' @return The output of \code{constr_eigval} is a list containing the following elements:
+#' \itemize{
+#'   \item \code{model}: a string that forms the description of the Stan model,
+#'   \item \code{data}: a data list containing the prepared data to be used
+#'                    for defining a Stan model object (\code{beta}, number of positive, free,
+#'                    negative eigenvalues).
+#' }
+#' If \code{filename!=NA} then the model string will also be written to the file with
+#' the specified name.
 #' 
 #' @section See also:
 #' \code{\link[symconivol]{constr_eigval_to_bcbsq}}, 
@@ -18,12 +34,33 @@
 #' Package: \code{\link[symconivol]{symconivol}}
 #' 
 #' @examples
-#' # some example code
+#' \dontrun{
+#' library(tidyverse)
+#' library(rstan)
+#' 
+#' filename <- "tmp.stan"
+#' M <- constr_eigval( beta=2, n=12, ind_low=8, ind_upp=9, filename=filename )
+#' stan_samp <- stan( file = filename, data = M$data,
+#'                    chains = 1, warmup = 1e3, iter = 1e5, cores = 2, refresh = 1e4 )
+#' file.remove(filename)
+#' 
+#' tib_ep <- rstan::extract(stan_samp)$ep %>% as_tibble() %>% gather() %>% add_column(type="0")
+#' tib_ef <- rstan::extract(stan_samp)$ef %>% as_tibble() %>% gather() %>% add_column(type="1")
+#' tib_en <- rstan::extract(stan_samp)$en %>% as_tibble() %>% gather() %>% add_column(type="2")
+#' tib <- bind_rows(tib_ep, tib_ef, tib_en)
+#' 
+#' ggplot() +
+#'     geom_density(data=tib, aes(x=value, y=..count.., group=type, color=type, fill=type), alpha=0.5, bw=0.03) + theme_bw() +
+#'     theme(axis.title.y=element_blank(), axis.text.y=element_blank(), axis.ticks.y=element_blank(), legend.position="none")
+#' }
 #' 
 #' @export
 #'
-constr_eigval <- function(pos, free, neg, filename=NA, overwrite=FALSE) {
-    if (!pos & !free & !neg) stop("\n Empty model.")
+constr_eigval <- function(beta, n, ind_low, ind_upp, filename=NA, overwrite=FALSE) {
+    if (!(n>0 & ind_low>=0 & ind_low<=ind_upp & ind_upp<=n)) stop("\n Invalid parameters (n>0, 0<=ind_low<=ind_upp<=n).")
+    pos  <- ind_low
+    free <- ind_upp-ind_low
+    neg  <- n-ind_upp
     modelinfo <- paste0("
 // Model for sampling eigenvalues from the Gaussian orthogonal/unitary/symplectic ensemble
 // constrained on the index, the number of positive eigenvalues.
@@ -149,6 +186,9 @@ packageVersion("symconivol"),").
     vector[nf] ef ;                                            // free eigenvalues
     ef = -ef_min ;\n}")
     
+    out <- list()
+    out$data <- list( beta=beta, nn=neg, nf=free, np=pos ) 
+    out$model <- model_string
     if ( !is.na(filename) && file.exists(filename) && overwrite==FALSE )
         stop("\n File with given filename exists and overwrite==FALSE.")
     else if ( !is.na(filename) ) {
@@ -158,8 +198,6 @@ packageVersion("symconivol"),").
         writeLines(model_string, file_conn)
         close(file_conn)
     }
-    return(model_string)
+    return(out)
 }
-
-
 

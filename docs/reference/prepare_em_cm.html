@@ -11,8 +11,8 @@
 <!-- jquery -->
 <script src="https://code.jquery.com/jquery-3.1.0.min.js" integrity="sha384-nrOSfDHtoPMzJHjVTdCopGqIqeYETSXhZDFyniQ8ZHcVy08QesyHcnOUpMpqnmWq" crossorigin="anonymous"></script>
 <!-- Bootstrap -->
+<link href="https://maxcdn.bootstrapcdn.com/bootswatch/3.3.7/yeti/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous">
 
-<link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
 
 <!-- Font Awesome icons -->
@@ -29,7 +29,11 @@
   
 <meta property="og:title" content="Evaluate bivariate chi-bar-squared samples for maximum likelihood estimation — prepare_em_cm" />
 
-<meta property="og:description" content="prepare_em_cm" />
+<meta property="og:description" content="prepare_em_cm takes a two-column matrix whose rows form
+iid samples from a bivariate chi-bar-squared distribution and
+prepares the data used in maximum likelihood estimation." />
+
+<meta property="og:image" content="http://damelunx.github.io/symconivol/logo.png" />
 <meta name="twitter:card" content="summary" />
 <!-- mathjax -->
 <script src='https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML'></script>
@@ -45,7 +49,7 @@
   <body>
     <div class="container template-reference-topic">
       <header>
-      <div class="navbar navbar-default navbar-fixed-top" role="navigation">
+      <div class="navbar navbar-inverse navbar-fixed-top" role="navigation">
   <div class="container">
     <div class="navbar-header">
       <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
@@ -59,32 +63,45 @@
       <ul class="nav navbar-nav">
         <li>
   <a href="../index.html">
-    <span class="fa fa-home fa-lg"></span>
+    <span class="fa fa-home"></span>
      
   </a>
 </li>
 <li>
-  <a href="../reference/index.html">Reference</a>
+  <a href="../reference/symconivol.html">Overview</a>
 </li>
 <li class="dropdown">
   <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
-    Articles
+    Study
      
     <span class="caret"></span>
   </a>
   <ul class="dropdown-menu" role="menu">
     <li>
-      <a href="../articles/curv_meas.html">Studying curvature measures of symmetric cones</a>
+      <a href="../articles/curv_meas.html">Main</a>
     </li>
     <li>
-      <a href="../articles/curv_meas_tech.html">Studying curvature measures of symmetric cones - Technical details</a>
+      <a href="../articles/curv_meas_tech.html">Technical addendum</a>
     </li>
   </ul>
 </li>
       </ul>
       
       <ul class="nav navbar-nav navbar-right">
-        
+        <li>
+  <a href="../reference/index.html">
+    <span class="fa fa-file-code-o"></span>
+     
+    functions &amp; data
+  </a>
+</li>
+<li>
+  <a href="https://github.com/damelunx/symconivol">
+    <span class="fa fa-github fa-lg"></span>
+     
+    github
+  </a>
+</li>
       </ul>
     </div><!--/.nav-collapse -->
   </div><!--/.container -->
@@ -100,7 +117,9 @@
     </div>
 
     
-    <p><code>prepare_em_cm</code></p>
+    <p><code>prepare_em_cm</code> takes a two-column matrix whose rows form
+iid samples from a bivariate chi-bar-squared distribution and
+prepares the data used in maximum likelihood estimation.</p>
     
 
     <pre class="usage"><span class='fu'>prepare_em_cm</span>(<span class='no'>d</span>, <span class='no'>low</span>, <span class='no'>upp</span>, <span class='no'>m_samp</span>)</pre>
@@ -110,37 +129,54 @@
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
       <th>d</th>
-      <td><p>parameter description</p></td>
+      <td><p>the dimension of the bivariate chi-bar squared distribution.</p></td>
     </tr>
     <tr>
       <th>low</th>
-      <td><p>parameter description</p></td>
+      <td><p>lower bound for <code>k</code>; has to be <code>&gt;0</code></p></td>
     </tr>
     <tr>
       <th>upp</th>
-      <td><p>parameter description</p></td>
+      <td><p>upper bound for <code>k</code>; has to be <code>&lt;d</code></p></td>
     </tr>
     <tr>
       <th>m_samp</th>
-      <td><p>parameter description</p></td>
+      <td><p>two-column matrix whose rows from iid samples from a bivariate
+chi-bar-squared distribution.</p></td>
     </tr>
     </table>
     
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>returns what</p>
+    <p>The output of <code>prepare_em_cm</code> is <code>(low-upp+1)</code> row matrix whose
+        <code>k</code>th row contains the products of the density values of the chi_k^2
+        and chi_(d-k)^2 distributions evaluated in the sample points;
+        the row-form of the matrix is more convenient for the computations.</p>
+    
+    <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
+
+    <p>This function works pretty much exactly as <code>prepare_em</code> from the
+<code>conivol</code> package, the only difference being that the "boundary
+cases" <code>k==0,n</code> do not have to be considered/are ignored.
+In the general case this is not needed, but for the curvature
+measures this is a useful feature.</p>
     
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
-    <p><code><a href='constr_eigval.html'>constr_eigval</a></code>, 
+    <p><code>prepare_em</code>, 
+<code><a href='constr_eigval.html'>constr_eigval</a></code>, 
 <code><a href='constr_eigval_to_bcbsq.html'>constr_eigval_to_bcbsq</a></code>, 
 <code><a href='estim_em_cm.html'>estim_em_cm</a></code></p>
 <p>Package: <code><a href='symconivol.html'>symconivol</a></code></p>
     
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'># some example code
+    <pre class="examples"><div class='input'><span class='no'>CM</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='curv_meas_exact.html'>curv_meas_exact</a></span>(<span class='fl'>4</span>,<span class='fl'>3</span>)$<span class='no'>A</span>[,<span class='fl'>2</span>]
+<span class='no'>CM</span> <span class='kw'>&lt;-</span> <span class='no'>CM</span>/<span class='fu'>sum</span>(<span class='no'>CM</span>)
 
+<span class='no'>m_samp</span> <span class='kw'>&lt;-</span> <span class='kw pkg'>conivol</span><span class='kw ns'>::</span><span class='fu'>rbichibarsq</span>(<span class='fl'>1e5</span>,<span class='no'>CM</span>)
+
+<span class='fu'>str</span>( <span class='fu'>prepare_em_cm</span>( <span class='fl'>15</span>, <span class='fl'>1</span>, <span class='fl'>9</span>, <span class='no'>m_samp</span> ))</div><div class='output co'>#&gt;  num [1:9, 1:100000] 0.031951 0.017709 0.005994 0.001523 0.000312 ...</div><div class='input'>
 </div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
@@ -149,6 +185,8 @@
       <li><a href="#arguments">Arguments</a></li>
       
       <li><a href="#value">Value</a></li>
+
+      <li><a href="#details">Details</a></li>
 
       <li><a href="#see-also">See also</a></li>
       
