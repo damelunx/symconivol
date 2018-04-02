@@ -1,5 +1,5 @@
 Package: symconivol
-Version: 0.0.1
+Version: 0.1.0
 Title: A package for curvature measures of symmetric cones
 Description: The symconivol package provides functions for
     analyzing intrinsic volumes and curvature measures of

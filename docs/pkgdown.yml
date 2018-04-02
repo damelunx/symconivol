@@ -7,6 +7,7 @@ articles:
   est-sdev-indnormcm-1.png: curv-meas_figures/est-sdev-indnormcm-1.png
   est-sdev-intrvol-1.png: curv-meas_figures/est-sdev-intrvol-1.png
   est-var-PhiInd-1.pdf: curv-meas_figures/est-var-PhiInd-1.pdf
+  est-var-PhiInd-1.png: curv-meas_figures/est-var-PhiInd-1.png
   est-var-indnormcm-1.png: curv-meas_figures/est-var-indnormcm-1.png
   est-var-intrvol-1.png: curv-meas_figures/est-var-intrvol-1.png
   illustr-dim-norm-cm-1.pdf: curv-meas_figures/illustr-dim-norm-cm-1.pdf

@@ -151,8 +151,31 @@
     
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='no'>L</span> <span class='kw'>&lt;-</span> <span class='fu'>leigh</span>()</div><div class='output co'>#&gt; <span class='error'>Error in tibble(rho = c(rev(1 - c), c), kappa = c(rev(curve_half), 1 -     curve_half)): could not find function "tibble"</span></div><div class='input'><span class='fu'>ggplot</span>(<span class='no'>L</span>$<span class='no'>tab</span>, <span class='fu'>aes</span>(<span class='kw'>x</span><span class='kw'>=</span><span class='no'>rho</span>,<span class='kw'>y</span><span class='kw'>=</span><span class='no'>kappa</span>)) + <span class='fu'>geom_line</span>()</div><div class='output co'>#&gt; <span class='error'>Error in ggplot(L$tab, aes(x = rho, y = kappa)): could not find function "ggplot"</span></div><div class='input'><span class='no'>x</span> <span class='kw'>&lt;-</span> (<span class='fl'>0</span>:<span class='fl'>10</span>)/<span class='fl'>10</span>
-<span class='fu'>matrix</span>(<span class='fu'>c</span>(<span class='no'>x</span>, <span class='no'>L</span>$<span class='fu'>lkup_rho</span>(<span class='no'>x</span>) ),<span class='fl'>11</span>,<span class='fl'>2</span>)</div><div class='output co'>#&gt; <span class='error'>Error in matrix(c(x, L$lkup_rho(x)), 11, 2): object 'L' not found</span></div><div class='input'><span class='fu'>matrix</span>(<span class='fu'>c</span>(<span class='no'>x</span>, <span class='no'>L</span>$<span class='fu'>lkup_kappa</span>(<span class='no'>x</span>) ),<span class='fl'>11</span>,<span class='fl'>2</span>)</div><div class='output co'>#&gt; <span class='error'>Error in matrix(c(x, L$lkup_kappa(x)), 11, 2): object 'L' not found</span></div><div class='input'>
+    <pre class="examples"><div class='input'><span class='no'>L</span> <span class='kw'>&lt;-</span> <span class='fu'>leigh</span>()
+<span class='fu'>ggplot</span>(<span class='no'>L</span>$<span class='no'>tab</span>, <span class='fu'>aes</span>(<span class='kw'>x</span><span class='kw'>=</span><span class='no'>rho</span>,<span class='kw'>y</span><span class='kw'>=</span><span class='no'>kappa</span>)) + <span class='fu'>geom_line</span>()</div><div class='img'><img src='leigh-1.png' alt='' width='700' height='432.632880098887' /></div><div class='input'><span class='no'>x</span> <span class='kw'>&lt;-</span> (<span class='fl'>0</span>:<span class='fl'>10</span>)/<span class='fl'>10</span>
+<span class='fu'>matrix</span>(<span class='fu'>c</span>(<span class='no'>x</span>, <span class='no'>L</span>$<span class='fu'>lkup_rho</span>(<span class='no'>x</span>) ),<span class='fl'>11</span>,<span class='fl'>2</span>)</div><div class='output co'>#&gt;       [,1]          [,2]
+#&gt;  [1,]  0.0 -1.259628e-06
+#&gt;  [2,]  0.1  7.762827e-02
+#&gt;  [3,]  0.2  1.618063e-01
+#&gt;  [4,]  0.3  2.538881e-01
+#&gt;  [5,]  0.4  3.598310e-01
+#&gt;  [6,]  0.5  4.999999e-01
+#&gt;  [7,]  0.6  6.401690e-01
+#&gt;  [8,]  0.7  7.461119e-01
+#&gt;  [9,]  0.8  8.381937e-01
+#&gt; [10,]  0.9  9.223717e-01
+#&gt; [11,]  1.0  1.000001e+00</div><div class='input'><span class='fu'>matrix</span>(<span class='fu'>c</span>(<span class='no'>x</span>, <span class='no'>L</span>$<span class='fu'>lkup_kappa</span>(<span class='no'>x</span>) ),<span class='fl'>11</span>,<span class='fl'>2</span>)</div><div class='output co'>#&gt;       [,1]         [,2]
+#&gt;  [1,]  0.0 1.740784e-06
+#&gt;  [2,]  0.1 1.277354e-01
+#&gt;  [3,]  0.2 2.430591e-01
+#&gt;  [4,]  0.3 3.459488e-01
+#&gt;  [5,]  0.4 4.331761e-01
+#&gt;  [6,]  0.5 5.000001e-01
+#&gt;  [7,]  0.6 5.668239e-01
+#&gt;  [8,]  0.7 6.540512e-01
+#&gt;  [9,]  0.8 7.569409e-01
+#&gt; [10,]  0.9 8.722646e-01
+#&gt; [11,]  1.0 9.999983e-01</div><div class='input'>
 </div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
