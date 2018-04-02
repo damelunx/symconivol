@@ -7,6 +7,7 @@ reference:
   - title: Exported Functions
     desc: ~
     contents:
+      - '`SDP_rnk_pred`'
       - '`curv_meas_exact`'
       - '`pat_bnd`'
       - '`leigh`'

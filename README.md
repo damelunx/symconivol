@@ -22,8 +22,8 @@ Intrinsic volumes form interesting and useful characteristics of convex cones. T
 
 One application of the curvature measures is that they can be used for understanding the distribution of the rank of the solution of a random [semidefinite program](https://en.wikipedia.org/wiki/Semidefinite_programming). Concretely, if the semidefinite program is of the form
 
-> ![equation](http://latex.codecogs.com/gif.latex?%5Cunderset%7BX%5Cin%5Cmathcal%7BS%7D%5En%7D%7B%5Ctext%7Bmin%7D%7D%20%5C;%20%5Clangle%20C,X%5Crangle_%7B%5Cmathcal%7BS%7D%5En%7D)
-> ![equation](http://latex.codecogs.com/gif.latex?%5Ctext%7Bsubject%20to%20%7D%5C;%20X%5Csucceq%200%20,%5Cquad%20%5Clangle%20A_k,X%5Crangle_%7B%5Cmathcal%7BS%7D%5En%7D%3Db_k%20,%5C;%20k%3D1,%5Cldots,m)
+> ![equation](README_figures/gif.latex-eq1.gif)
+> ![equation](README_figures/gif.latex-eq2.gif)
 
 that is, the SDP optimizes a linear functional over the intersection of the cone of positive semidefinite matrices with an affine linear subspace of (generically) codimension *m*, then the rank of the solution (assuming that the SDP has a solution) can be predicted by:
 
