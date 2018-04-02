@@ -19,6 +19,10 @@
 #' 
 #' @section Functions:
 #' \itemize{
+#'   \item \code{\link[symconivol]{SDP_rnk_pred}}: produces the (estimated)
+#'         probability vector for the rank of the solution of a random
+#'         semidefinite program
+#'   
 #'   \item \code{\link[symconivol]{curv_meas_exact}}: gives the exact curvature
 #'         measures for \code{n=1,2,3}
 #'   

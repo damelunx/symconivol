@@ -21,19 +21,45 @@ Motivation
 Intrinsic volumes form interesting and useful characteristics of convex cones. The cones of positive semidefinite matrices have an additional property, which is its decomposition into the rank strata. This decomposition lead to a decomposition of its intrinsic volumes into the so-called curvature measures. These curvature measures can be studied through the eigenvalue distribution of the [Gaussian orthogonal/unitary/symplectic ensemble](https://en.wikipedia.org/wiki/Random_matrix). The functions provided by this package facilitate studying this connection. See the accompanying vignette for such a study.
 
 One application of the curvature measures is that they can be used for understanding the distribution of the rank of the solution of a random [semidefinite program](https://en.wikipedia.org/wiki/Semidefinite_programming). Concretely, if the semidefinite program is of the form
-\begin{align*}
-    \underset{X\in\mathcal{S}^n}{\text{min}} \quad & \langle C,X\rangle_{\mathcal{S}^n}
-\\ \text{subject to} \quad & \langle A_k,X\rangle_{\mathcal{S}^n}=b_k ,\quad k=1,\ldots,m
-\\ & X\succeq 0 ,
-\end{align*}
-that is, the SDP optimizes a linear functional over the intersection of the cone of positive semidefinite matrices aith an affine linear subspace of (generically) codimension *m*, then the rank of the solution (assuming that the SDP has a solution) can be predicted by:
+
+> ![equation](http://latex.codecogs.com/gif.latex?%5Cunderset%7BX%5Cin%5Cmathcal%7BS%7D%5En%7D%7B%5Ctext%7Bmin%7D%7D%20%5C;%20%5Clangle%20C,X%5Crangle_%7B%5Cmathcal%7BS%7D%5En%7D)
+> ![equation](http://latex.codecogs.com/gif.latex?%5Ctext%7Bsubject%20to%20%7D%5C;%20X%5Csucceq%200%20,%5Cquad%20%5Clangle%20A_k,X%5Crangle_%7B%5Cmathcal%7BS%7D%5En%7D%3Db_k%20,%5C;%20k%3D1,%5Cldots,m)
+
+that is, the SDP optimizes a linear functional over the intersection of the cone of positive semidefinite matrices with an affine linear subspace of (generically) codimension *m*, then the rank of the solution (assuming that the SDP has a solution) can be predicted by:
 
 ``` r
-n <- 100
-m <- 17
+n <- 30
+m <- 150
 pat <- pat_bnd(1,n)
 d <- pat$d
 pred_rank_sol <- round(n*mu()$lkup_rho(m/d))
 ```
 
 See the corresponding [section](articles/curv_meas.html#appl_SDP) in the accompanying vignette for more details.
+
+A more precise estimate of the rank probabilities of the solution of a random SDP is provided through the function `SDP_rnk_pred`:
+
+``` r
+SP <- SDP_rnk_pred(30,150)
+
+print(SP$P)
+#> # A tibble: 31 x 2
+#>     `k=` `Prob(rk_sol=k)=`
+#>    <int>             <dbl>
+#>  1     0          0.      
+#>  2     1          0.      
+#>  3     2          0.      
+#>  4     3          0.      
+#>  5     4          0.      
+#>  6     5          0.      
+#>  7     6          9.45e-33
+#>  8     7          7.99e-19
+#>  9     8          4.09e-10
+#> 10     9          9.50e- 5
+#> # ... with 21 more rows
+print(SP$bnds)
+#> [1]  6 16
+print(SP$plot)
+```
+
+![](README_figures/SDP_rnk_pred-1.png)

@@ -719,6 +719,7 @@ for (beta in c(1,2,4)) {
             }
         }
         B <- plotPhiInd[[j]]
+        B <- t(t(B)/colSums(B))
         A <- matrix(0,d+1,n+1)
         A[1,1] <- 1
         A[d+1,n+1] <- 1
@@ -913,7 +914,7 @@ include_graphics("var_ivol.png", dpi=img_dpi)
 So far, no asymptotic estimates for the variance of the index normalized curvature measures
 are known. We obtain the following plots for the estimated values:
 
-```{r est-var-PhiInd, echo=FALSE, fig.align="center"}
+```{r est-var-PhiInd, echo=FALSE, fig.width = 7, fig.height=5, fig.align="center"}
 nmin <- 3
 nmax <- 10
 plotsPB <- list()
@@ -997,23 +998,15 @@ for (beta in c(1,2,4)) {
         j <- j+1
         pat <- pat_bnd(beta,n)
         d <- pat$d
-        B <- matrix(0,d+1,n+1)
-        for (k in (0:d)) {
-            for (r in 0:n) {
-                if (r>=pat$r_low(k) & r<=pat$r_upp(k)) {
-                    B[1+k,1+r] <- exp(-d*(k/d-L$lkup_kappa(r/n))^2/2/C/(1-abs(2*r/n-1)))
-                }
-            }
-            B[,1+r] <- B[,1+r]/sum(B[,1+r])
-        }
         A <- matrix(0,d+1,n+1)
         A[1,1] <- 1
         A[d+1,n+1] <- 1
         for (k in 1:(d-1)) {
             rmin <- pat$r_low(k)
             rmax <- pat$r_upp(k)
-            logR <- log(B[1+k,1+rmin:rmax])-2*d*R$lkup_R((rmin:rmax)/n)
-            A[1+k,1+rmin:rmax] <- exp(logR)/max(exp(logR))
+            logP <- -d*(k/d-L$lkup_kappa((rmin:rmax)/n))^2/2/C/(1-abs(2*(rmin:rmax)/n-1)) - 
+                        2*d*R$lkup_R((rmin:rmax)/n)
+            A[1+k,1+rmin:rmax] <- exp(logP)/max(exp(logP))
         }
         plotPhiDim[[j]] <- A
         plotsPB[[j]] <- plot_Phi(A, TRUE, FALSE, TRUE)

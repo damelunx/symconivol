@@ -436,3 +436,136 @@ alg_deg <- function(n) {
 }
 
 
+
+#' Predict the rank of the solution of a semidefinite program
+#' 
+#' \code{SDP_rnk_pred} produces the (estimated) probability vector for the
+#' rank of the solution of a random semidefinite program.
+#' 
+#' The semidefinite program is assumed to be of the form
+#' \deqn{\underset{X\in\mathcal{S}^n}{\text{min}} \quad \langle C,X\rangle_{\mathcal{S}^n}}{min_(X in S^n) (C,X)_(S^n)}
+#' \deqn{\text{subject to} \quad \langle A_k,X\rangle_{\mathcal{S}^n}=b_k ,\quad k=1,\ldots,m}{subject to (A_k,X)_(S^n)=b_k , k=1,...,m}
+#' \deqn{X\succeq 0.}{X>=0.}
+#' Generically, if a solution to this program exists, then it is unique, and its
+#' rank satisfies some inequalities, known as Pataki Inequalities. In the natural
+#' random model the rank probabilities can be expressed in terms of curvature
+#' measures, which is what this function estimates. See the vignette accompanying
+#' the \code{\link[symconivol]{symconivol}} package for more details and
+#' references.
+#' 
+#' @param n size of matrix
+#' 
+#' @param m number of constraints
+#' 
+#' @param beta Dyson index specifying the underlying (skew-) field:
+#'             \describe{
+#'               \item{\code{beta==1}:}{real numbers}
+#'               \item{\code{beta==2}:}{complex numbers}
+#'               \item{\code{beta==4}:}{quaternion numbers}
+#'             }
+#' 
+#' @param C estimated constant in the variance of index normalized curvature measures
+#' 
+#' @return The output of \code{SDP_rnk_pred} is a  is a list of three elements:
+#'         \itemize{
+#'           \item \code{P}: the estimated probability vector (in form of a tibble
+#'                           to avoid confusion about the index),
+#'           \item \code{bnds}: the Pataki bounds,
+#'           \item \code{plot}: a histogram plot (ggplot2) of the probability vector
+#'                           (the vertical lines indicate the Pataki bounds).
+#'         }
+#' 
+#' @section See also:
+#' Package: \code{\link[symconivol]{symconivol}}
+#' 
+#' @examples
+#' library(tidyverse)
+#' SP <- SDP_rnk_pred(30,150)
+#' 
+#' print(SP$P)
+#' print(SP$bnds)
+#' print(SP$plot)
+#' 
+#' @export
+#' 
+SDP_rnk_pred <- function(n,m,beta=1,C=0.2) {
+    if (!(beta %in% c(1,2,4)))
+        stop("beta must be in {1,2,4}.")
+    if (!(n>=2))
+        stop("n must be >=2.")
+    pat <- pat_bnd(beta,n)
+    d <- pat$d
+    if (!(m>=1 & m<=d-1))
+        stop("m must be >=1 and <=d-1.")
+    if (n<=3) {
+        v <- curv_meas_exact(beta,n)$A[m+1,]
+    } else if ((beta==1 & n<=10) | (beta==2 & n<=8) | (beta==4 & n<=6)) {
+        v <- rep(0,n+1)
+        w <- rep(0,n+1)
+        PhiInd <- symconivol::phi_ind[[str_c("beta=",beta,",n=",n)]]
+        for (r in 0:n) {
+            if (r<ceiling(n/2)) {
+                r_lkup <- n-r
+                k_lkup <- d-m
+            } else {
+                r_lkup <- r
+                k_lkup <- m
+            }
+            if (k_lkup >= pat$k_low(r_lkup) & k_lkup <= pat$k_upp(r_lkup)) {
+                colPhi <- str_c("r=",r_lkup,",s=0")
+                w[1+r] <- PhiInd[[colPhi]][k_lkup-pat$k_low(r_lkup)+1]
+            }
+        }
+        IndP <- matrix(0,2,n-2)
+        for (r in 1:(n-2)) {
+            if (r==(n-1)/2) {
+                IndP[,r] <- c(1,1)
+            } else if (r<(n-1)/2) {
+                index <- str_c("beta=",beta,",n=",n,",r=",n-r-1)
+                IndP[,r] <- symconivol::ind_prob[[index]][c(2,1)]
+            } else {
+                index <- str_c("beta=",beta,",n=",n,",r=",r)
+                IndP[,r] <- symconivol::ind_prob[[index]]
+            }
+        }
+        rmin <- pat$r_low(m)
+        rmax <- pat$r_upp(m)
+        logR <- rep(0,rmax-rmin+1)
+        r0 <- floor((rmin+rmax)/2)
+        if (r0<rmax) {
+            for (r in (r0+1):rmax) {
+                logR[1+r-rmin] <- log(w[1+r]) - log(w[1+r0]) +
+                    sum( log(IndP[2,r0:(r-1)]) - log(IndP[1,r0:(r-1)]) )
+            }
+        }
+        if (r0>rmin) {
+            for (r in (r0-1):rmin) {
+                logR[1+r-rmin] <- log(w[1+r]) - log(w[1+r0]) +
+                    sum( log(IndP[1,r:(r0-1)]) - log(IndP[2,r:(r0-1)]) )
+            }
+        }
+        v[1+rmin:rmax] <- exp(logR)
+    } else {
+        L <- leigh()
+        R <- rate()
+        v <- rep(0,n+1)
+        rmin <- pat$r_low(m)
+        rmax <- pat$r_upp(m)
+        logP <- -d*(m/d-L$lkup_kappa((rmin:rmax)/n))^2/2/C/(1-abs(2*(rmin:rmax)/n-1)) - 
+            2*d*R$lkup_R((rmin:rmax)/n)
+        v[1+rmin:rmax] <- exp(logP)
+    }
+    v <- v/sum(v)
+    P <- tibble('k='=0:n, 'Prob(rk_sol=k)='=v)
+    M <- matrix(c(0:n,v),2,length(v),byrow=TRUE)
+    tib_plot <- tibble( x=unlist(apply(M, 2, function(x) return(rep(x[1],x[2]*1e5)))) )
+    r_low <- pat$r_low(m)
+    r_upp <- pat$r_upp(m)
+    P_plot <- ggplot() + coord_cartesian(xlim=c(0,n)) +
+        stat_bin(data=tib_plot, aes(x,y = (..count..)/sum(..count..)),
+                 breaks=1.5:length(v)-1, alpha=0.2, color="black") +
+        xlab("rank") + ylab("rank probabilities") + theme_bw() +
+        geom_vline(xintercept=r_low-0.5,color="red",linetype=2) +
+        geom_vline(xintercept=r_upp+0.5,color="red",linetype=2)
+    return( list(P=P,bnds=c(r_low,r_upp),plot=P_plot) )
+}
