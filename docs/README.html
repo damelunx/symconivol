@@ -123,20 +123,32 @@
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># install.packages("devtools")</span>
 devtools::<span class="kw">install_github</span>(<span class="st">"damelunx/symconivol"</span>)</code></pre></div>
 </div>
+<div id="code-documentation" class="section level2">
+<h2 class="hasAnchor">
+<a href="#code-documentation" class="anchor"></a>Code &amp; documentation</h2>
+<ul>
+<li>Source code: <a href="http://github.com/damelunx/symconivol">github.com/damelunx/symconivol</a>
+</li>
+<li>Manual: <a href="http://damelunx.github.io/symconivol/">damelunx.github.io/symconivol/</a>
+</li>
+</ul>
+</div>
 <div id="motivation" class="section level2">
 <h2 class="hasAnchor">
 <a href="#motivation" class="anchor"></a>Motivation</h2>
 <p>Intrinsic volumes form interesting and useful characteristics of convex cones. The cones of positive semidefinite matrices have an additional property, which is its decomposition into the rank strata. This decomposition lead to a decomposition of its intrinsic volumes into the so-called curvature measures. These curvature measures can be studied through the eigenvalue distribution of the <a href="https://en.wikipedia.org/wiki/Random_matrix">Gaussian orthogonal/unitary/symplectic ensemble</a>. The functions provided by this package facilitate studying this connection. See the accompanying vignette for such a study.</p>
 <p>One application of the curvature measures is that they can be used for understanding the distribution of the rank of the solution of a random <a href="https://en.wikipedia.org/wiki/Semidefinite_programming">semidefinite program</a>. Concretely, if the semidefinite program is of the form</p>
 <blockquote>
-<p><img src="README_figures/gif.latex-eq1.gif" alt="equation"><embed src="http://latex.codecogs.com/gif.latex?%5Ctext%7Bsubject%20to%20%7D%5C;%20X%5Csucceq%200%20,%5Cquad%20%5Clangle%20A_k,X%5Crangle_%7B%5Cmathcal%7BS%7D%5En%7D%3Db_k%20,%5C;%20k%3D1,%5Cldots,m"></embed></p>
+<p><img src="README_figures/gif.latex-eq1.gif" alt="equation"><img src="README_figures/gif.latex-eq2.gif" alt="equation"></p>
 </blockquote>
 <p>that is, the SDP optimizes a linear functional over the intersection of the cone of positive semidefinite matrices with an affine linear subspace of (generically) codimension <em>m</em>, then the rank of the solution (assuming that the SDP has a solution) can be predicted by:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">n &lt;-<span class="st"> </span><span class="dv">30</span>
 m &lt;-<span class="st"> </span><span class="dv">150</span>
 pat &lt;-<span class="st"> </span><span class="kw"><a href="reference/pat_bnd.html">pat_bnd</a></span>(<span class="dv">1</span>,n)
 d &lt;-<span class="st"> </span>pat$d
-pred_rank_sol &lt;-<span class="st"> </span><span class="kw">round</span>(n*<span class="kw"><a href="reference/mu.html">mu</a></span>()$<span class="kw">lkup_rho</span>(m/d))</code></pre></div>
+pred_rank_sol &lt;-<span class="st"> </span><span class="kw">round</span>(n*<span class="kw"><a href="reference/mu.html">mu</a></span>()$<span class="kw">lkup_rho</span>(m/d))
+<span class="kw">print</span>(pred_rank_sol)
+<span class="co">#&gt; [1] 11</span></code></pre></div>
 <p>See the corresponding <a href="articles/curv_meas.html#appl_SDP">section</a> in the accompanying vignette for more details.</p>
 <p>A more precise estimate of the rank probabilities of the solution of a random SDP is provided through the function <code>SDP_rnk_pred</code>:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">SP &lt;-<span class="st"> </span><span class="kw"><a href="reference/SDP_rnk_pred.html">SDP_rnk_pred</a></span>(<span class="dv">30</span>,<span class="dv">150</span>)

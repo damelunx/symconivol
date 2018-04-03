@@ -103,6 +103,16 @@
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># install.packages("devtools")</span>
 devtools::<span class="kw">install_github</span>(<span class="st">"damelunx/symconivol"</span>)</code></pre></div>
 </div>
+<div id="code-documentation" class="section level2">
+<h2 class="hasAnchor">
+<a href="#code-documentation" class="anchor"></a>Code &amp; documentation</h2>
+<ul>
+<li>Source code: <a href="http://github.com/damelunx/symconivol">github.com/damelunx/symconivol</a>
+</li>
+<li>Manual: <a href="http://damelunx.github.io/symconivol">damelunx.github.io/symconivol</a>
+</li>
+</ul>
+</div>
 <div id="motivation" class="section level2">
 <h2 class="hasAnchor">
 <a href="#motivation" class="anchor"></a>Motivation</h2>
@@ -116,7 +126,9 @@ devtools::<span class="kw">install_github</span>(<span class="st">"damelunx/symc
 m &lt;-<span class="st"> </span><span class="dv">150</span>
 pat &lt;-<span class="st"> </span><span class="kw"><a href="reference/pat_bnd.html">pat_bnd</a></span>(<span class="dv">1</span>,n)
 d &lt;-<span class="st"> </span>pat$d
-pred_rank_sol &lt;-<span class="st"> </span><span class="kw">round</span>(n*<span class="kw"><a href="reference/mu.html">mu</a></span>()$<span class="kw">lkup_rho</span>(m/d))</code></pre></div>
+pred_rank_sol &lt;-<span class="st"> </span><span class="kw">round</span>(n*<span class="kw"><a href="reference/mu.html">mu</a></span>()$<span class="kw">lkup_rho</span>(m/d))
+<span class="kw">print</span>(pred_rank_sol)
+<span class="co">#&gt; [1] 11</span></code></pre></div>
 <p>See the corresponding <a href="articles/curv_meas.html#appl_SDP">section</a> in the accompanying vignette for more details.</p>
 <p>A more precise estimate of the rank probabilities of the solution of a random SDP is provided through the function <code>SDP_rnk_pred</code>:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">SP &lt;-<span class="st"> </span><span class="kw"><a href="reference/SDP_rnk_pred.html">SDP_rnk_pred</a></span>(<span class="dv">30</span>,<span class="dv">150</span>)

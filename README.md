@@ -15,6 +15,12 @@ You can install `symconivol` from github with:
 devtools::install_github("damelunx/symconivol")
 ```
 
+Code & documentation
+--------------------
+
+-   Source code: [github.com/damelunx/symconivol](http://github.com/damelunx/symconivol)
+-   Manual: [damelunx.github.io/symconivol](http://damelunx.github.io/symconivol)
+
 Motivation
 ----------
 
@@ -33,6 +39,8 @@ m <- 150
 pat <- pat_bnd(1,n)
 d <- pat$d
 pred_rank_sol <- round(n*mu()$lkup_rho(m/d))
+print(pred_rank_sol)
+#> [1] 11
 ```
 
 See the corresponding [section](articles/curv_meas.html#appl_SDP) in the accompanying vignette for more details.
