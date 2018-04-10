@@ -21,6 +21,10 @@ Code & documentation
 -   Source code: [github.com/damelunx/symconivol](http://github.com/damelunx/symconivol)
 -   Manual: [damelunx.github.io/symconivol](http://damelunx.github.io/symconivol)
 
+**See also:**
+
+-   `conivol` package: [damelunx.github.io/conivol](http://damelunx.github.io/conivol)
+
 Motivation
 ----------
 
