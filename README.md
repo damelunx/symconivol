@@ -47,7 +47,7 @@ print(pred_rank_sol)
 #> [1] 11
 ```
 
-See the corresponding [section](articles/curv_meas.html#appl_SDP) in the accompanying vignette for more details.
+See the corresponding [section](http://damelunx.github.io/symconivol/articles/curv_meas.html#appl_SDP) in the accompanying vignette for more details.
 
 A more precise estimate of the rank probabilities of the solution of a random SDP is provided through the function `SDP_rnk_pred`:
 
