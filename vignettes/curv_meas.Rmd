@@ -1210,7 +1210,7 @@ In [@MNSV11] (equation (92)) the following formula for the rate function $R(\rho
     & R(\rho) = \frac{L^2-1-\log(2L^2)}{4} + \frac{\rho}{2} \int_1^{\infty}
      tL^2-\frac{1}{t}-\frac{L^2}{1+b}\sqrt{\frac{(t-1)\;(1+t(1+b))\;(b+t(1+b))}{t}}\,dt
 \\ & + \frac{1-\rho}{2} \Big(
-    \log(a) - \frac{b(2+b)}{1+b+b^2}
+    \log(1+b) - \frac{b(2+b)}{1+b+b^2}
     + \int_{1/(1+b)}^{\infty}
      tL^2-\frac{1}{t}-\frac{L^2}{1+b}\sqrt{\frac{(1+t)\;(t(1+b)-1)\;(t(1+b)-b)}{t}}\,dt \Big) ,
 \end{align*}
